@@ -1,4 +1,8 @@
-site_name: Basic MkDocs Example Project
+site_name: Blueprint Documentation
+nav:
+  - Home: index.md
+  - 'Getting Started': gettingStarted.md
+  - Architecture: architecture.md
 theme:
   name: readthedocs
   highlightjs: true

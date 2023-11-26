@@ -1,21 +1,6 @@
-# Welcome to MkDocs
+# Welcome to Blueprint
+*The ergonomic web application framework*
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+Blueprint unifies frontend and server code through a single state and event system. 
 
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
-
-## Another thing
-
-    FOO BAR
+See the [getting started](./gettingStarted.md) section to install and initialize your first Blueprint project. Browse the [architecture](./architecture.md) to see how it differs from other web application frameworks.

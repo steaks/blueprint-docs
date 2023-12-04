@@ -1,6 +1,6 @@
 # Welcome to Blueprint
 *The ergonomic web application framework*
 
-Blueprint unifies frontend and server code through a single state and event system. 
+Blueprint re-imagines web application architectures. It unifies server and frontend code so developers can build in one cohesive, ergonomic code-base. For more information on how Blueprint makes building web applications easier see [why blueprint](./whyBlueprint.md).
 
-See the [getting started](./gettingStarted.md) section to install and initialize your first Blueprint project. Browse the [architecture](./architecture.md) to see how it differs from other web application frameworks.
+To get started follow the [getting started](./gettingStarted.md) tutorial to install and initialize your first Blueprint project. 

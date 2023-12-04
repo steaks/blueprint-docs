@@ -2,230 +2,141 @@
 
 ## Core Concepts
 
-In Rx Blueprint you build "apps" using events, state, operators, and hooks. Then you serve your apps and connect your apps to Reach using rx-react. You do not need to worry about webserver routing or networking between frontend and server. Just build events, state, and business logic. Blueprint handles the rest!
+In Rx Blueprint you build apps using events, state, hooks, and operators. You do not need to worry about webserver routing or networking between frontend and server. Just build events, state, and business logic. Blueprint handles the rest!
 
-*Events -* Signals that can kick off hooks. Use events to signal that a button has been clicked or a table has been updated in the database.
+**App -** Logical grouping of features. Apps contain state, events, and hooks that are synchronized between your server and frontend.
 
-*State -* System to keep track of variables. State changes can trigger hooks. State values can be leveraged in hooks. Use states to track inputs from a user (e.g. text inputs, switch button state).
+**Events -** Signals that can kick off hooks. Use events to signal that a button has been clicked or a table has been updated in the database.
 
-*Hooks -* Business logic that may be triggered by events or state changes. Use hooks to query your database, insert into your database, run calculations, etc. A hook may also kick off events and make state changes.
+**State -** System to keep track of variables. State changes can trigger hooks. State values can be leveraged in hooks. Use states to track inputs from a user (e.g. text inputs, switch button state).
 
-*Operators -* Thin layer that connects vanilla javascript functions with Hooks.
+**Hooks -** Business logic that may be triggered by events or state changes. Use hooks to query your database, insert into your database, run calculations, etc. A hook may also kick off events and make state changes.
 
-## Example - User Profile Page
+**Operators -** Thin layer that connects vanilla javascript functions with Hooks.
 
-We will create a user profile page to demonstrate these concepts in action. The page will display a user's email, first name, and last name, and it will allow edits to each of these. We will do the following to build the user page:
+#### App
 
-1. Build the server-side app
-2. Serve the app
-3. Share common types between server and frontend
-4. Connect the app to React
-5. Build the React UI
-6. Understand the Blueprint UI
-7. Run the server, frontend, and blueprint ui
+An app is the organizational structure for building an app. Typically, you will build apps that correspond with a page in the brower or widget that can be placed on many pages. On the server you will create an app that contains state, events, and hooks. On the frontend you will create a corresponding React component that wraps the ui elements for your app.
 
-For the full example see [userprofile](https://github.com/steaks/blueprint/tree/main/userprofile).
+```typescript
+//server
 
-### Build the server-side app
-
-First, we'll build a mock database. This is not part of the blueprint app, but we need to simulate a db to build a realistic app.
-
-```
-const db = {
-  email: "",
-  firstName: "",
-  lastName: ""
-};
-
-const queryUser = () =>
-  Promise.resolve({email: db.email, firstName: db.firstName, lastName: db.lastName})
-
-const updateUser = (email: string, firstName: string, lastName: string): Promise<string> => {
-  db.email = email;
-  db.firstName = firstName;
-  db.lastName = lastName;
-  return Promise.resolve("Saved to db!");
-};
-```
-
-Next, we'll set up state. We need to keep track of edits to the email, first name, and last name, so we create a state variable for each of those.
-```
-const email$ = state<string>("email");
-const firstName$ = state<string>("firstName");
-const lastName$ = state<string>("lastName");
-```
-
-
-Then we create an event, "save", which will be fired when a user clicks the save button.
-```
-const save$ = event("save");
-```
-
-Next, we create hooks to implement our business logic. The first hook will query the database for the user's profile. The second hook will update the user in the database when save is fired.
-```
-const user$ = hook(
-  "user",
-  {}, //using default options
-  operator(queryUser)
-);
-
-const onSave$ = hook(
-  "onSave",
-  {triggers: [save$]},
-  operator(updateUser, email$, firstName$, lastName$),
-  trigger(user$)
-);
-```
-
-Finally, we put it all together.
-
-```
-import {app, state, event, hook, operator, trigger} from "@blueprint/server";
-import {User} from "../../../shared/src/apps/userProfile";
-
-const db = {
-  email: "",
-  firstName: "",
-  lastName: ""
-};
-
-const queryUser = (): Promise<User> =>
-  Promise.resolve({email: db.email, firstName: db.firstName, lastName: db.lastName})
-
-const updateUser = (email: string, firstName: string, lastName: string): Promise<string> => {
-  db.email = email;
-  db.firstName = firstName;
-  db.lastName = lastName;
-  return Promise.resolve("Saved to db!");
-};
-
-const userProfile$$ = app(() => {
-  const email$ = state<string>("email");
-  const firstName$ = state<string>("firstName");
-  const lastName$ = state<string>("lastName");
-
-  const save$ = event("save");
-
-  const user$ = hook(
-    "user",
-    {}, //use default options
-    operator(queryUser)
-  );
-
-  const onSave$ = hook(
-    "onSave",
-    {triggers: [save$]},
-    operator(updateUser, email$, firstName$, lastName$),
-    trigger(user$)
-  );
-
+//myApp$$ will be served through the blueprint serve function
+const myApp$$ = app(() => {
+  // Add state, events, and hooks
+  
   return {
-    name: "userProfile",
-    state: [email$, firstName$, lastName$],
-    events: [save$],
-    hooks: [user$, onSave$]
+    name: "myApp",
+    state: [], //TODO state 
+    events: [], //TODO events
+    hooks: [] //TODO hooks 
   };
 });
-
-export default userProfile$$;
 ```
 
-### Serve the App
-Create a session and serve the app.
+```typescript
+export const MyApp = app("myApp"); //MyApp will be used as a React component.
 
 ```
-import {serve} from "@blueprint/server";
-import userProfile from "./apps/userProfile";
-import session from "./session";
 
-serve({userProfile}, session);
+#### Events
+
+Events are signals that can kick off hooks. On the server you can create events via the `event` function. On the frontend you can create corresponding events. You can trigger events from either the frontend or backend. See [hooks](#hooks) for details about triggering and subscribing to events.
+
+```typescript
+//server
+const myApp$$ = app(() => {
+  const myEvent$ = event("myEvent"); 
+  
+  return {
+    name: "myApp",
+    state: [], //TODO state 
+    events: [myEvent$], //TODO events
+    hooks: [] //TODO hooks 
+  };
+});
 ```
 
-### Share common types
+```typescript
+//ui
+const useMyEvent = event("myApp", "myEvent");
 
-The server and frontend will use the User type. We put shared types in the `shared` directory.
-
-```
-export interface User {
-    readonly email: string;
-    readonly firstName: string;
-    readonly lastName: string;
-}
-```
-
-### Connect the App to React
-
-Use rx-react to connect your app's state, events, and hooks, and create a component that wraps the app.
-
-```
-import {app, state, event, hook} from "../rxreact"
-import {User} from "../../../shared/src/apps/userProfile";
-
-export const useEmail = state<string>("userProfile", "email");
-export const useFirstName = state<string>("userProfile", "firstName");
-export const useLastName = state<string>("userProfile", "lastName");
-
-export const useSave = event("userProfile", "save");
-
-export const useUser = hook<User>("userProfile", "user");
-
-export const UserProfile = app("userProfile");
+const MyAppUI = () => {
+  const [triggerMyEvent] = useMyEvent();
+  
+  return (
+    <MyApp>
+      <button onClick={triggerMyEvent}>Trigger My Event</button>
+    </MyApp>
+  );
+};
 ```
 
-### Build the React UI
+#### State
 
-Build a React UI using the `UserProfile` component and hooks you created when connecting the Rx Blueprint app to React.
+State is synchronized across the server and frontend. On the server you can create state via the `state` function. On the frontend you can create corresponding states.
 
+```typescript
+//server
+const myApp$$ = app(() => {
+  const myState$ = state<string>("myState");
+
+  return {
+    name: "myApp",
+    state: [myState$], //TODO state 
+    events: [], //TODO events
+    hooks: [] //TODO hooks 
+  };
+});
 ```
-import React from "react";
-import {useEmail, useFirstName, useLastName, useSave, UserProfile, useUser} from "../apps/userProfile";
 
-const UserProfileUI = () => {
-  const [user] = useUser();
-  const [email, setEmail] = useEmail();
-  const [firstName, setFirstName] = useFirstName();
-  const [lastName, setLastName] = useLastName();
+```typescript
+//ui
+const useMyState = state("myApp", "myState");
 
-  const [save] = useSave();
+const MyAppUI = () => {
+  const [myState, setMyState] = useMyEvent();
 
   return (
-    <UserProfile>
-      <strong>User:</strong>
-      <div>Email: {user?.email}</div>
-      <div>First name: {user?.firstName}</div>
-      <div>Last name: {user?.lastName}</div>
-      <hr/>
-      <strong>Edit:</strong>
-      <div>
-        <input defaultValue={email} onChange={e => setEmail(e.currentTarget.value)} placeholder="Email"/>
-      </div>
-      <div>
-        <input defaultValue={firstName} onChange={e => setFirstName(e.currentTarget.value)} placeholder="First Name"/>
-      </div>
-      <div>
-        <input defaultValue={lastName} onChange={e => setLastName(e.currentTarget.value)} placeholder="Last Name"/>
-      </div>
-      <button onClick={save}>Save</button>
-    </UserProfile>
+    <MyApp>
+      <input defaultValue={myState} onChange={e => setMyState(e.currentTarget.value)} />
+      <button onClick={triggerMyEvent}>Trigger My Event</button>
+    </MyApp>
   );
 };
 
-export default UserProfileUI;
 ```
 
-### Understand the Blueprint UI
+#### Hooks
 
-Along with your application you will get a blueprint ui for free. The blueprint UI is a flow-diagram that shows the architecture of your apps.
+#### Operator
 
-### Run the server, frontend and blueprint ui
+
+#### File Structure
+
+Blueprint has four top-level directories: scripts, server, shared, and ui.
+
+**scripts** - Build scripts used by the makefile for tasks like installing, compiling, and cleaning<br/>
+**server** - Code for the server-side of your application. This is where you'll write your business logic.<br/>
+**shared** - Code shared between your server and ui. Include types shared between your server and ui.<br/>
+**ui** - Code for your user interface. Typically, you'll include display logic, preferring to put business logic on your server.
 
 ```
-1. make install # in root directory of repo
-2. make build # in root directory of repo
-3. cd examples/userprofile
-4. make run-server # Run in separate terminal.
-5. make run-ui # Run in separate terminal. Open browser to http://localhost:3000
-6. make run-blueprint # Run in separate terminal. Open browser to http://localhost:3001
+/scripts
+/server
+  /src
+    /apps
+    index.ts
+    diagram.ts
+    session.ts
+/shared
+  /src
+    /apps
+/client
+  /src
+    /apps
+    /ui
 ```
 
-Explore the userprofile [codebase](https://github.com/steaks/blueprint/tree/main/userprofile)
+##### Scripts
+Scripts contains tooling for building. In this directory you'll typically

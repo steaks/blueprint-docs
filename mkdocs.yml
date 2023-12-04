@@ -3,6 +3,8 @@ nav:
   - Home: index.md
   - 'Getting Started': gettingStarted.md
   - Architecture: architecture.md
+  - Examples: examples.md
+  - Why Blueprint: whyBlueprint.md
 theme:
   name: readthedocs
   highlightjs: true

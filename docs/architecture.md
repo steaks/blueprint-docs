@@ -2,7 +2,7 @@
 
 ## Core Concepts
 
-In Rx Blueprint you build apps using events, state, hooks, and operators. You do not need to worry about webserver routing or networking between frontend and server. Just build events, state, and business logic. Blueprint handles the rest!
+In Blueprint you build apps using events, state, and hooks. You do not need to worry about webserver routing or networking between frontend and server. Just build events, state, and business logic. Blueprint handles the rest!
 
 **App -** Logical grouping of features. Apps contain state, events, and hooks that are synchronized between your server and frontend.
 
@@ -12,17 +12,15 @@ In Rx Blueprint you build apps using events, state, hooks, and operators. You do
 
 **Hooks -** Business logic that may be triggered by events or state changes. Use hooks to query your database, insert into your database, run calculations, etc. A hook may also kick off events and make state changes.
 
-**Operators -** Thin layer that connects vanilla javascript functions with Hooks.
-
 #### App
 
-An app is the organizational structure for building an app. Typically, you will build apps that correspond with a page in the brower or widget that can be placed on many pages. On the server you will create an app that contains state, events, and hooks. On the frontend you will create a corresponding React component that wraps the ui elements for your app.
+An app is the organizational structure for building an app. Typically, you will build apps that correspond with a page or re-usable widget in the browser. On the server you will create an app that contains state, events, and hooks. On the frontend you will create a corresponding React component that wraps the ui elements for your app.
 
 ```typescript
 //server
 
-//myApp$$ will be served through the blueprint serve function
-const myApp$$ = app(() => {
+//myApp will be served through the blueprint serve function
+const myApp = app(() => {
   // Add state, events, and hooks
   
   return {
@@ -45,7 +43,7 @@ Events are signals that can kick off hooks. On the server you can create events 
 
 ```typescript
 //server
-const myApp$$ = app(() => {
+const myApp = app(() => {
   const myEvent$ = event("myEvent"); 
   
   return {
@@ -78,7 +76,7 @@ State is synchronized across the server and frontend. On the server you can crea
 
 ```typescript
 //server
-const myApp$$ = app(() => {
+const myApp = app(() => {
   const myState$ = state<string>("myState");
 
   return {
@@ -109,8 +107,7 @@ const MyAppUI = () => {
 
 #### Hooks
 
-#### Operator
-
+TODO
 
 #### File Structure
 
@@ -132,11 +129,9 @@ Blueprint has four top-level directories: scripts, server, shared, and ui.
 /shared
   /src
     /apps
-/client
+/ui
   /src
     /apps
-    /ui
+  home.tsx  
+  index.tsx
 ```
-
-##### Scripts
-Scripts contains tooling for building. In this directory you'll typically

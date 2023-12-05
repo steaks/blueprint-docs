@@ -1,3 +1,0 @@
-# Why Blueprint
-
-TODO

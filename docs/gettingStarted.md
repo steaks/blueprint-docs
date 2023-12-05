@@ -369,3 +369,7 @@ const UI = () => {
 
 export default UI;
 ```
+
+## View the Control Flow Diagram
+
+Go to http://localhost:3001. Since Blueprint tracks your control-flow it is able to display an interactive control-flow diagram.

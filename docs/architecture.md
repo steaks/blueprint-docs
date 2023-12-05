@@ -2,24 +2,20 @@
 
 ## Core Concepts
 
-In Blueprint you build apps using events, state, and hooks. You do not need to worry about webserver routing or networking between frontend and server. Just build events, state, and business logic. Blueprint handles the rest!
+**App -** Logical grouping of features - typically a website page or re-usable widget.
 
-**App -** Logical grouping of features. Apps contain state, events, and hooks that are synchronized between your server and frontend.
+**Events -** Signals that can trigger hooks.
 
-**Events -** Signals that can kick off hooks. Use events to signal that a button has been clicked or a table has been updated in the database.
+**State -** Variables that track state. State changes can trigger hooks.
 
-**State -** System to keep track of variables. State changes can trigger hooks. State values can be leveraged in hooks. Use states to track inputs from a user (e.g. text inputs, switch button state).
+**Hooks -** Declarative functions that may be triggered by events or state changes
 
-**Hooks -** Business logic that may be triggered by events or state changes. Use hooks to query your database, insert into your database, run calculations, etc. A hook may also kick off events and make state changes.
+### App
 
-#### App
-
-An app is the organizational structure for building an app. Typically, you will build apps that correspond with a page or re-usable widget in the browser. On the server you will create an app that contains state, events, and hooks. On the frontend you will create a corresponding React component that wraps the ui elements for your app.
+An app is the organizational structure for building. Typically, you will build apps that correspond with a page or re-usable widget in the browser. On the server you will create an app that contains state, events, and hooks. On the frontend you will create a corresponding React component that wraps the ui elements for your app.
 
 ```typescript
 //server
-
-//myApp will be served through the blueprint serve function
 const myApp = app(() => {
   // Add state, events, and hooks
   
@@ -33,13 +29,21 @@ const myApp = app(() => {
 ```
 
 ```typescript
-export const MyApp = app("myApp"); //MyApp will be used as a React component.
+//ui
+const MyApp = app("myApp");
 
+const UI = () => {
+  return (
+    <MyApp>
+      {/* Your Components Here */}
+    </MyApp>
+  );
+};
 ```
 
-#### Events
+### Events
 
-Events are signals that can kick off hooks. On the server you can create events via the `event` function. On the frontend you can create corresponding events. You can trigger events from either the frontend or backend. See [hooks](#hooks) for details about triggering and subscribing to events.
+Events are signals that can trigger hooks. They are useful for responding to button clicks, link clicks, toggle switches, etc. You can trigger events from either the frontend or backend. See [hooks](#hooks) for details about triggering and subscribing to events.
 
 ```typescript
 //server
@@ -57,6 +61,7 @@ const myApp = app(() => {
 
 ```typescript
 //ui
+const MyApp = app("myApp");
 const useMyEvent = event("myApp", "myEvent");
 
 const MyAppUI = () => {
@@ -70,7 +75,7 @@ const MyAppUI = () => {
 };
 ```
 
-#### State
+### State
 
 State is synchronized across the server and frontend. On the server you can create state via the `state` function. On the frontend you can create corresponding states.
 
@@ -98,16 +103,135 @@ const MyAppUI = () => {
   return (
     <MyApp>
       <input defaultValue={myState} onChange={e => setMyState(e.currentTarget.value)} />
-      <button onClick={triggerMyEvent}>Trigger My Event</button>
     </MyApp>
   );
 };
 
 ```
 
-#### Hooks
+### Hooks
 
-TODO
+Hooks wrap typescript functions. Hooks can be triggered by events or state changes. And they can inject state variables as parameters into the function being invoked.
+
+#### Simple hook
+
+This simple hook wraps the function `myFunc` and will be invoked when the app is initialized.
+
+```typescript
+//server
+const myFunc = () => 
+  console.log("Hello World");
+
+const myApp = app(() => {
+  const myFunc$ = hook(operator(myFunc));
+
+  return {
+    name: "myApp",
+    state: [], //TODO state 
+    events: [], //TODO events
+    hooks: [myFunc$] //TODO hooks 
+  };
+});
+```
+
+#### Hook with asyncronous function
+
+Hooks work with asyncronous functions natively.
+
+```typescript
+//server
+const myFunc = (): Promise<string> => 
+  Promise.resolve("Hello World");
+
+const myApp = app(() => {
+  const myFunc$ = hook(operator(myFunc));
+
+  return {
+    name: "myApp",
+    state: [], //TODO state 
+    events: [], //TODO events
+    hooks: [myFunc$] //TODO hooks 
+  };
+});
+```
+
+#### Hook injected with state
+
+This hook wraps the myFunc function and passes the variable tracked by the a$ into the function when invoked. Hooks trigger when state it depends on changes or on initialization if it doesn't depend on any state. This hook will be triggered when a$ changes.
+
+```typescript
+const myFunc = (a: string) =>
+  console.log(`a: ${a}`);
+
+const myApp = app(() => {
+  const a$ = state<string>();
+  const myFunc$ = hook(operator(myFunc, a$));
+
+  return {
+    name: "myApp",
+    state: [a$], //TODO state 
+    events: [], //TODO events
+    hooks: [myFunc$] //TODO hooks 
+  };
+});
+```
+
+#### Hooks triggered by events
+
+Hooks can be triggered by events specified in the `triggers` option. This hook will be triggered by myEvent$.
+
+```typescript
+//server
+const myFunc = () => 
+  console.log("Hello World");
+
+const myApp = app(() => {
+  const myEvent$ = event();
+  const myFunc$ = hook(
+    "myFunc",
+    {triggers: [myEvent$]},
+    operator(myFunc)
+  );
+
+  return {
+    name: "myApp",
+    state: [], //TODO state 
+    events: [myEvent$], //TODO events
+    hooks: [myFunc$] //TODO hooks 
+  };
+});
+```
+
+#### Hooks can trigger events
+
+After a hook has completed it's function it can trigger downstream events. This hook invokes myFunc. Then it triggers myEvent$.
+
+```typescript
+//server
+const myFunc = () => 
+  console.log("Hello World");
+
+const myApp = app(() => {
+  const myEvent$ = event();
+  const myFunc$ = hook(
+    "myFunc",
+    {},
+    operator(myFunc),
+    trigger(myEvent$)
+  );
+
+  return {
+    name: "myApp",
+    state: [], //TODO state 
+    events: [myEvent$], //TODO events
+    hooks: [myFunc$] //TODO hooks 
+  };
+});
+```
+
+#### Hooks are also events and state
+
+A hook is considered to be both an event and state. So you can trigger a hook just like you can trigger an event. And you can inject the state of the result of a hook just like you'd inject state.
 
 #### File Structure
 

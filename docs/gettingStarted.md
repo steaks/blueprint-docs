@@ -31,7 +31,7 @@ make run-blueprint # Run in separate terminal. Open browser to http://localhost:
 
 Create an app called "helloWorld." An app encapsulates specific functionality - typically a page or re-usable widget on a website.
 
-### Build the server-size.
+### Build the server-side.
 
 ```typescript
 /* /server/src/apps/helloWorld.ts */

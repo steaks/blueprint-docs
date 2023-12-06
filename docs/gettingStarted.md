@@ -1,5 +1,7 @@
 # Getting Started
 
+This tutorial walks you through building the [hello world](./examples.md#hello-world) application. It takes ~10 minutes to complete the tutorial.
+
 ## Prerequisites
 
 Install [Node](https://nodejs.org/en/) with node >= 16 and npm >= 8. Install [GNU make](https://www.gnu.org/s/make/manual/make.html) version >= 4.

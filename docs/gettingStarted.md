@@ -44,7 +44,7 @@ const helloWorld = app(() => {
     name: "helloWorld",
     state: [],
     events: [],
-    hooks: []
+    tasks: []
   };
 });
 
@@ -148,7 +148,7 @@ const helloWorld = app(() => {
     name: "helloWorld",
     state: [myState$],
     events: [],
-    hooks: []
+    tasks: []
   };
 });
 
@@ -194,7 +194,7 @@ const helloWorld = app(() => {
     name: "helloWorld",
     state: [myState$],
     events: [myEvent$],
-    hooks: []
+    tasks: []
   };
 });
 
@@ -227,17 +227,17 @@ const UI = () => {
 export default UI;
 ```
 
-## Build your first hook
+## Build your first task
 
-Build a hook that counts the number of works in your myState$ variable. 
+Build a task that counts the number of works in your myState$ variable. 
 
-### Create a hook in the server-side of your app.
+### Create a task in the server-side of your app.
 
-Write a javascript function that counts the number of words provided a string. Then invoke that function with a hook that is triggered when myState$ changes.
+Write a javascript function that counts the number of words provided a string. Then invoke that function with a task that is triggered when myState$ changes.
 
 ```typescript
 /* /server/src/apps/helloWorld.ts */
-import {app, event, state, hook, operator} from "blueprint-server";
+import {app, event, state, task, from} from "blueprint-server";
 
 const wordCount = (words: string): number => {
   const trimmedWords = words.trim();
@@ -247,15 +247,15 @@ const wordCount = (words: string): number => {
 const helloWorld = app(() => {
   const myState$ = state("myState", "Hello State!");
   const myEvent$ = event("myEvent");
-  const wordCount$ = hook(
-    operator(wordCount, myState$)
+  const wordCount$ = task(
+    from(wordCount, myState$)
   );
 
   return {
     name: "helloWorld",
     state: [myState$],
     events: [myEvent$],
-    hooks: [wordCount$]
+    tasks: [wordCount$]
   };
 });
 
@@ -267,12 +267,12 @@ export default helloWorld;
 
 ```typescript
 /* /ui/src/apps/helloWorld.tsx */
-import {app, state, event, hook} from "blueprint-react";
+import {app, state, event, task} from "blueprint-react";
 
 const HelloWorld = app("helloWorld");
 const useMyState = state<string>("helloWorld", "myState");
 const useMyEvent = event("helloWorld", "myEvent");
-const useWordCount = hook<number>("helloWorld", "wordCount")
+const useWordCount = task<number>("helloWorld", "wordCount")
 
 const UI = () => {
   const [myState, setMyState] = useMyState();
@@ -292,17 +292,17 @@ const UI = () => {
 export default UI;
 ```
 
-## Build your second hook 
+## Build your second task 
 
-Build a hook that tracks the number of clicks tied to myEvent$.
+Build a task that tracks the number of clicks tied to myEvent$.
 
-### Create a hook in the server-side of your app.
+### Create a task in the server-side of your app.
 
-Track the number of clicks with a variable _clickCount. And use a hook to increment _clickCount everytime myEvent$ is triggered.
+Track the number of clicks with a variable _clickCount. And use a task to increment _clickCount everytime myEvent$ is triggered.
 
 ```typescript
 /* /server/src/apps/helloWorld.ts */
-import {app, event, state, hook, operator} from "blueprint-server";
+import {app, event, state, task, from} from "blueprint-server";
 
 const wordCount = (words: string): number => {
   const trimmedWords = words.trim();
@@ -318,21 +318,21 @@ const clickCount = () => {
 const helloWorld = app(() => {
   const myState$ = state("myState", "Hello State!");
   const myEvent$ = event("myEvent");
-  const wordCount$ = hook(
-    operator(wordCount, myState$)
+  const wordCount$ = task(
+    from(wordCount, myState$)
   );
 
-  const clickCount$ = hook(
+  const clickCount$ = task(
     "clickCount",
     {triggers: [myEvent$]},
-    operator(clickCount)
+    from(clickCount)
   );
 
   return {
     name: "helloWorld",
     state: [myState$],
     events: [myEvent$],
-    hooks: [wordCount$, clickCount$]
+    tasks: [wordCount$, clickCount$]
   };
 });
 
@@ -343,13 +343,13 @@ export default helloWorld;
 
 ```typescript
 /* /ui/src/apps/helloWorld.tsx */
-import {app, state, event, hook} from "blueprint-react";
+import {app, state, event, task} from "blueprint-react";
 
 const HelloWorld = app("helloWorld");
 const useMyState = state<string>("helloWorld", "myState");
 const useMyEvent = event("helloWorld", "myEvent");
-const useWordCount = hook<number>("helloWorld", "wordCount")
-const useClickCount = hook<number>("helloWorld", "clickCount");
+const useWordCount = task<number>("helloWorld", "wordCount")
+const useClickCount = task<number>("helloWorld", "clickCount");
 
 const UI = () => {
   const [myState, setMyState] = useMyState();

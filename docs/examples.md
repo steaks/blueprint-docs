@@ -8,7 +8,7 @@ This example is a simple application that demonstrates the basics of Blueprint. 
 
 ```typescript
 //server
-import {app, event, state, hook, operator} from "blueprint-server";
+import {app, event, state, hook, from} from "blueprint-server";
 
 const wordCount = (words: string): number => {
   const trimmedWords = words.trim();
@@ -24,21 +24,21 @@ const clickCount = () => {
 const helloWorld = app(() => {
   const myState$ = state("myState", "Hello State!");
   const myEvent$ = event("myEvent");
-  const wordCount$ = hook(
-    operator(wordCount, myState$)
+  const wordCount$ = task(
+    from(wordCount, myState$)
   );
 
-  const clickCount$ = hook(
+  const clickCount$ = task(
     "clickCount",
     {triggers: [myEvent$]},
-    operator(clickCount)
+    from(clickCount)
   );
 
   return {
     name: "helloWorld",
     state: [myState$],
     events: [myEvent$],
-    hooks: [wordCount$, clickCount$]
+    tasks: [wordCount$, clickCount$]
   };
 });
 
@@ -47,13 +47,13 @@ export default helloWorld;
 
 ```typescript
 //frontend
-import {app, state, event, hook} from "blueprint-react";
+import {app, state, event, task} from "blueprint-react";
 
 const HelloWorld = app("helloWorld");
 const useMyState = state<string>("helloWorld", "myState");
 const useMyEvent = event("helloWorld", "myEvent");
-const useWordCount = hook<number>("helloWorld", "wordCount")
-const useClickCount = hook<number>("helloWorld", "clickCount");
+const useWordCount = task<number>("helloWorld", "wordCount")
+const useClickCount = task<number>("helloWorld", "clickCount");
 
 const UI = () => {
   const [myState, setMyState] = useMyState();
@@ -98,7 +98,7 @@ This example is an application with that allows a user to view and edit their em
 
 ```typescript
 //server
-import {app, state, event, hook, operator, trigger} from "blueprint-server";
+import {app, state, event, task, from, trigger} from "blueprint-server";
 import {queryUser, updateUser} from "../db/user";
 
 export default app(() => {
@@ -108,16 +108,16 @@ export default app(() => {
 
   const save$ = event("save");
 
-  const user$ = hook(
+  const user$ = task(
     "user",
     {},
-    operator(queryUser)
+    from(queryUser)
   );
 
-  const onSave$ = hook(
+  const onSave$ = task(
     "onSave",
     {triggers: [save$]},
-    operator(updateUser, email$, firstName$, lastName$),
+    from(updateUser, email$, firstName$, lastName$),
     trigger(user$)
   );
 
@@ -125,7 +125,7 @@ export default app(() => {
     name: "userProfile",
     state: [email$, firstName$, lastName$],
     events: [save$],
-    hooks: [user$, onSave$]
+    tasks: [user$, onSave$]
   };
 });
 ```
@@ -133,14 +133,14 @@ export default app(() => {
 ```typescript
 //frontend
 import React from "react";
-import {app, state, event, hook} from "blueprint-react"
+import {app, state, event, task} from "blueprint-react"
 import {User} from "../../../shared/src/apps/userProfile";
 
 export const useEmail = state<string>("userProfile", "email");
 export const useFirstName = state<string>("userProfile", "firstName");
 export const useLastName = state<string>("userProfile", "lastName");
 export const useSave = event("userProfile", "save");
-export const useUser = hook<User>("userProfile", "user");
+export const useUser = task<User>("userProfile", "user");
 export const UserProfile = app("userProfile");
 
 const UI = () => {
@@ -185,6 +185,96 @@ wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlu
 chmod +x createBlueprint.sh
 ./createBlueprint.sh -t userProfile MyUserProfileApplication
 cd MyUserProfileApplication
+make install
+make build
+make run-server # Run in separate terminal.
+make run-ui # Run in separate terminal. Open browser to http://localhost:3000
+make run-blueprint # Run in separate terminal. Open browser to http://localhost:3001
+```
+
+## Rectangle
+
+This example is a simple application that calculates the area of a rectangle provided width and height. Below are code snippets that show the core code of the application. You can also browse the full code [here](https://github.com/steaks/blueprint/tree/main/templates/rectangle) or run the application locally [here](#run-the-application-locally-2).
+
+### Code Snippets
+
+```typescript
+//server
+import {app, event, state, task, from} from "blueprint-server";
+
+const wordCount = (words: string): number => {
+  const trimmedWords = words.trim();
+  return trimmedWords.length === 0 ? 0 : trimmedWords.trim().split(/\s/).length;
+};
+
+let _clickCount = 0;
+const clickCount = () => {
+  _clickCount = _clickCount + 1;
+  return _clickCount;
+};
+
+const helloWorld = app(() => {
+  const myState$ = state("myState", "Hello State!");
+  const myEvent$ = event("myEvent");
+  const wordCount$ = task(
+    from(wordCount, myState$)
+  );
+
+  const clickCount$ = task(
+    "clickCount",
+    {triggers: [myEvent$]},
+    from(clickCount)
+  );
+
+  return {
+    name: "helloWorld",
+    state: [myState$],
+    events: [myEvent$],
+    tasks: [wordCount$, clickCount$]
+  };
+});
+
+export default helloWorld;
+```
+
+```typescript
+//frontend
+import {app, state, event, task} from "blueprint-react";
+
+const HelloWorld = app("helloWorld");
+const useMyState = state<string>("helloWorld", "myState");
+const useMyEvent = event("helloWorld", "myEvent");
+const useWordCount = task<number>("helloWorld", "wordCount")
+const useClickCount = task<number>("helloWorld", "clickCount");
+
+const UI = () => {
+  const [myState, setMyState] = useMyState();
+  const [triggerMyEvent] = useMyEvent();
+  const [wordCount] = useWordCount();
+  const [clickCount] = useClickCount();
+
+
+  return (
+    <HelloWorld>
+      <div>Hello World!!</div>
+      <input defaultValue={myState} onChange={e => setMyState(e.target.value)} />
+      <button onClick={triggerMyEvent}>Trigger My Event!</button>
+      <div>Word Count: {wordCount}</div>
+      <div>Click Count: {clickCount || 0}</div>
+    </HelloWorld>
+  );
+};
+
+export default UI;
+```
+
+### Run the application locally
+
+```shell
+wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
+chmod +x createBlueprint.sh
+./createBlueprint.sh -t helloWorld MyHelloWorldApplication
+cd MyHelloWorldApplication
 make install
 make build
 make run-server # Run in separate terminal.

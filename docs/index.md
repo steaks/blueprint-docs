@@ -13,32 +13,32 @@ The example below creates a web page that calculates the area of a rectangle pro
 
 ```
 //server
-import {app, state, hook, operator} from "blueprint-server";
+import {app, state, task, from} from "blueprint-server";
 const area = (width: number, height: number) =>
   width * height;
   
 const myApp = app(() => {
   const width$ = state("width", 10);
   const height$ = state("height", 15);
-  const area$ = hook(operator(area, width$, height$));
+  const area$ = task(from(area, width$, height$));
 
   return {
     name: "myApp",
     state: [width$, height$],
     events: [],
-    hooks: [area$]
+    tasks: [task$]
   };
 });
 ```
 
 ```typescript
 //frontend
-import {app, state, hook} from "blueprint-react";
+import {app, state, task} from "blueprint-react";
 
 const MyApp = app("myApp");
 const useWidth = state<number>("myApp", "width");
 const useHeight = state<number>("myApp", "height");
-const useArea = hook<number>("myApp", "area")
+const useArea = task<number>("myApp", "area")
 
 const UI = () => {
   const [width, setWidth] = useWidth();

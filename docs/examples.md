@@ -192,73 +192,51 @@ make run-blueprint # Run in separate terminal. Open browser to http://localhost:
 
 ## Rectangle
 
-This example is a simple application that calculates the area of a rectangle provided width and height. Below are code snippets that show the core code of the application. You can also browse the full code [here](https://github.com/steaks/blueprint/tree/main/templates/rectangle) or run the application locally [here](#run-the-application-locally-2).
+This example is a simple application that calculates the area of a rectangle provided width and height. Below are code snippets that show the core code of the application. You can also browse the full code [here](https://github.com/steaks/blueprint/tree/main/templates/rectangle) or run the application locally [here](#run-the-application-locally_2).
 
 ### Code Snippets
 
 ```typescript
 //server
-import {app, event, state, task, from} from "blueprint-server";
-
-const wordCount = (words: string): number => {
-  const trimmedWords = words.trim();
-  return trimmedWords.length === 0 ? 0 : trimmedWords.trim().split(/\s/).length;
-};
-
-let _clickCount = 0;
-const clickCount = () => {
-  _clickCount = _clickCount + 1;
-  return _clickCount;
-};
-
-const helloWorld = app(() => {
-  const myState$ = state("myState", "Hello State!");
-  const myEvent$ = event("myEvent");
-  const wordCount$ = task(
-    from(wordCount, myState$)
-  );
-
-  const clickCount$ = task(
-    {name: "clickCount", triggers: [myEvent$]},
-    from(clickCount)
-  );
+import {app, state, task, from} from "blueprint-server";
+const area = (width: number, height: number) =>
+  width * height;
+  
+const myApp = app(() => {
+  const width$ = state("width", 10);
+  const height$ = state("height", 15);
+  const area$ = task(from(area, width$, height$));
 
   return {
-    name: "helloWorld",
-    state: [myState$],
-    events: [myEvent$],
-    tasks: [wordCount$, clickCount$]
+    name: "myApp",
+    state: [width$, height$],
+    events: [],
+    tasks: [task$]
   };
 });
-
-export default helloWorld;
 ```
 
 ```typescript
 //frontend
-import {app, state, event, task} from "blueprint-react";
+import {app, state, task} from "blueprint-react";
 
-const HelloWorld = app("helloWorld");
-const useMyState = state<string>("helloWorld", "myState");
-const useMyEvent = event("helloWorld", "myEvent");
-const useWordCount = task<number>("helloWorld", "wordCount")
-const useClickCount = task<number>("helloWorld", "clickCount");
+const MyApp = app("myApp");
+const useWidth = state<number>("myApp", "width");
+const useHeight = state<number>("myApp", "height");
+const useArea = task<number>("myApp", "area")
 
 const UI = () => {
-  const [myState, setMyState] = useMyState();
-  const [triggerMyEvent] = useMyEvent();
-  const [wordCount] = useWordCount();
-  const [clickCount] = useClickCount();
+  const [width, setWidth] = useWidth();
+  const [height, setHeight] = useHeight();
+  const [area] = useArea();
 
 
   return (
-    <HelloWorld>
-      <div>Hello World!!</div>
-      <input defaultValue={myState} onChange={e => setMyState(e.target.value)} />
-      <button onClick={triggerMyEvent}>Trigger My Event!</button>
-      <div>Word Count: {wordCount}</div>
-      <div>Click Count: {clickCount || 0}</div>
-    </HelloWorld>
+    <MyApp>
+      <input defaultValue={width} onChange={e => setWidth(e.target.value)} />
+      <input defaultValue={height} onChange={e => setHeight(e.target.value)} />
+      <div>Area of Rectangle: {area}</div>
+    </MyApp>
   );
 };
 
@@ -270,8 +248,8 @@ export default UI;
 ```shell
 wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
 chmod +x createBlueprint.sh
-./createBlueprint.sh -t helloWorld MyHelloWorldApplication
-cd MyHelloWorldApplication
+./createBlueprint.sh -t rectangle MyRectangleApplication
+cd MyRectangleApplication
 make install
 make build
 make run-server # Run in separate terminal.

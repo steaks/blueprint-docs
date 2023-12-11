@@ -8,7 +8,7 @@ This example is a simple application that demonstrates the basics of Blueprint. 
 
 ```typescript
 //server
-import {app, event, state, hook, from} from "blueprint-server";
+import {app, event, state, task, from} from "blueprint-server";
 
 const wordCount = (words: string): number => {
   const trimmedWords = words.trim();
@@ -29,8 +29,7 @@ const helloWorld = app(() => {
   );
 
   const clickCount$ = task(
-    "clickCount",
-    {triggers: [myEvent$]},
+    {name: "clickCount", triggers: [myEvent$]},
     from(clickCount)
   );
 
@@ -109,8 +108,7 @@ export default app(() => {
   const save$ = event("save");
 
   const user$ = task(
-    "user",
-    {},
+    {name: "user"},
     from(queryUser)
   );
 
@@ -221,8 +219,7 @@ const helloWorld = app(() => {
   );
 
   const clickCount$ = task(
-    "clickCount",
-    {triggers: [myEvent$]},
+    {name: "clickCount", triggers: [myEvent$]},
     from(clickCount)
   );
 

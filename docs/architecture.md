@@ -188,8 +188,7 @@ const myFunc = () =>
 const myApp = app(() => {
   const myEvent$ = event();
   const myFunc$ = task(
-    "myFunc",
-    {triggers: [myEvent$]},
+    {name: "myFunc", triggers: [myEvent$]},
     from(myFunc)
   );
 
@@ -214,8 +213,7 @@ const myFunc = () =>
 const myApp = app(() => {
   const myEvent$ = event();
   const myFunc$ = task(
-    "myFunc",
-    {},
+    {name: "myFunc"},
     from(myFunc),
     trigger(myEvent$)
   );

@@ -323,8 +323,7 @@ const helloWorld = app(() => {
   );
 
   const clickCount$ = task(
-    "clickCount",
-    {triggers: [myEvent$]},
+    {name: "clickCount", triggers: [myEvent$]},
     from(clickCount)
   );
 

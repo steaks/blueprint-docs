@@ -4,26 +4,26 @@
 
 **App -** Logical grouping of features - typically a website page or re-usable widget.
 
-**Events -** Signals that can trigger hooks.
+**Events -** Signals that can trigger tasks.
 
-**State -** Variables that track state. State changes can trigger hooks.
+**State -** Variables that track state. State changes can trigger tasks.
 
-**Hooks -** Declarative functions that may be triggered by events or state changes
+**Tasks -** Declarative functions that may be triggered by events or state changes
 
 ### App
 
-An app is the organizational structure for building. Typically, you will build apps that correspond with a page or re-usable widget in the browser. On the server you will create an app that contains state, events, and hooks. On the frontend you will create a corresponding React component that wraps the ui elements for your app.
+An app is the organizational structure for building. Typically, you will build apps that correspond with a page or re-usable widget in the browser. On the server you will create an app that contains state, events, and tasks. On the frontend you will create a corresponding React component that wraps the ui elements for your app.
 
 ```typescript
 //server
 const myApp = app(() => {
-  // Add state, events, and hooks
+  // Add state, events, and tasks
   
   return {
     name: "myApp",
     state: [], //TODO state 
     events: [], //TODO events
-    hooks: [] //TODO hooks 
+    tasks: [] //TODO tasks 
   };
 });
 ```
@@ -43,7 +43,7 @@ const UI = () => {
 
 ### Events
 
-Events are signals that can trigger hooks. They are useful for responding to button clicks, link clicks, toggle switches, etc. You can trigger events from either the frontend or backend. See [hooks](#hooks) for details about triggering and subscribing to events.
+Events are signals that can trigger tasks. They are useful for responding to button clicks, link clicks, toggle switches, etc. You can trigger events from either the frontend or backend. See [tasks](#tasks) for details about triggering and subscribing to events.
 
 ```typescript
 //server
@@ -54,7 +54,7 @@ const myApp = app(() => {
     name: "myApp",
     state: [], //TODO state 
     events: [myEvent$], //TODO events
-    hooks: [] //TODO hooks 
+    tasks: [] //TODO tasks 
   };
 });
 ```
@@ -88,7 +88,7 @@ const myApp = app(() => {
     name: "myApp",
     state: [myState$], //TODO state 
     events: [], //TODO events
-    hooks: [] //TODO hooks 
+    tasks: [] //TODO tasks 
   };
 });
 ```
@@ -109,13 +109,13 @@ const MyAppUI = () => {
 
 ```
 
-### Hooks
+### Tasks
 
-Hooks wrap typescript functions. Hooks can be triggered by events or state changes. And they can inject state variables as parameters into the function being invoked.
+Tasks wrap typescript functions. Tasks can be triggered by events or state changes. And they can inject state variables as parameters into the function being invoked.
 
-#### Simple hook
+#### Simple task
 
-This simple hook wraps the function `myFunc` and will be invoked when the app is initialized.
+This simple task wraps the function `myFunc` and will be invoked when the app is initialized.
 
 ```typescript
 //server
@@ -123,20 +123,20 @@ const myFunc = () =>
   console.log("Hello World");
 
 const myApp = app(() => {
-  const myFunc$ = hook(operator(myFunc));
+  const myFunc$ = task(from(myFunc));
 
   return {
     name: "myApp",
     state: [], //TODO state 
     events: [], //TODO events
-    hooks: [myFunc$] //TODO hooks 
+    tasks: [myFunc$] //TODO tasks 
   };
 });
 ```
 
-#### Hook with asyncronous function
+#### Task with asyncronous function
 
-Hooks work with asyncronous functions natively.
+Tasks work with asyncronous functions natively.
 
 ```typescript
 //server
@@ -144,20 +144,20 @@ const myFunc = (): Promise<string> =>
   Promise.resolve("Hello World");
 
 const myApp = app(() => {
-  const myFunc$ = hook(operator(myFunc));
+  const myFunc$ = task(from(myFunc));
 
   return {
     name: "myApp",
     state: [], //TODO state 
     events: [], //TODO events
-    hooks: [myFunc$] //TODO hooks 
+    tasks: [myFunc$] //TODO tasks 
   };
 });
 ```
 
-#### Hook injected with state
+#### Task injected with state
 
-This hook wraps the myFunc function and passes the variable tracked by the a$ into the function when invoked. Hooks trigger when state it depends on changes or on initialization if it doesn't depend on any state. This hook will be triggered when a$ changes.
+This task wraps the myFunc function and passes the variable tracked by the a$ into the function when invoked. Tasks trigger when state it depends on changes or on initialization if it doesn't depend on any state. This task will be triggered when a$ changes.
 
 ```typescript
 const myFunc = (a: string) =>
@@ -165,20 +165,20 @@ const myFunc = (a: string) =>
 
 const myApp = app(() => {
   const a$ = state<string>();
-  const myFunc$ = hook(operator(myFunc, a$));
+  const myFunc$ = task(from(myFunc, a$));
 
   return {
     name: "myApp",
     state: [a$], //TODO state 
     events: [], //TODO events
-    hooks: [myFunc$] //TODO hooks 
+    tasks: [myFunc$] //TODO tasks 
   };
 });
 ```
 
-#### Hooks triggered by events
+#### Tasks triggered by events
 
-Hooks can be triggered by events specified in the `triggers` option. This hook will be triggered by myEvent$.
+Tasks can be triggered by events specified in the `triggers` option. This task will be triggered by myEvent$.
 
 ```typescript
 //server
@@ -187,24 +187,23 @@ const myFunc = () =>
 
 const myApp = app(() => {
   const myEvent$ = event();
-  const myFunc$ = hook(
-    "myFunc",
-    {triggers: [myEvent$]},
-    operator(myFunc)
+  const myFunc$ = task(
+    {name: "myFunc", triggers: [myEvent$]},
+    from(myFunc)
   );
 
   return {
     name: "myApp",
     state: [], //TODO state 
     events: [myEvent$], //TODO events
-    hooks: [myFunc$] //TODO hooks 
+    tasks: [myFunc$] //TODO tasks 
   };
 });
 ```
 
-#### Hooks can trigger events
+#### Tasks can trigger events
 
-After a hook has completed it's function it can trigger downstream events. This hook invokes myFunc. Then it triggers myEvent$.
+After a task has completed it's function it can trigger downstream events. This task invokes myFunc. Then it triggers myEvent$.
 
 ```typescript
 //server
@@ -213,10 +212,9 @@ const myFunc = () =>
 
 const myApp = app(() => {
   const myEvent$ = event();
-  const myFunc$ = hook(
-    "myFunc",
-    {},
-    operator(myFunc),
+  const myFunc$ = task(
+    {name: "myFunc"},
+    from(myFunc),
     trigger(myEvent$)
   );
 
@@ -224,14 +222,14 @@ const myApp = app(() => {
     name: "myApp",
     state: [], //TODO state 
     events: [myEvent$], //TODO events
-    hooks: [myFunc$] //TODO hooks 
+    tasks: [myFunc$] //TODO tasks 
   };
 });
 ```
 
-#### Hooks are also events and state
+#### Tasks are also events and state
 
-A hook is considered to be both an event and state. So you can trigger a hook just like you can trigger an event. And you can inject the state of the result of a hook just like you'd inject state.
+A task is considered to be both an event and state. So you can trigger a task just like you can trigger an event. And you can inject the state of the result of a task just like you'd inject state.
 
 #### File Structure
 

@@ -11,6 +11,8 @@ Blueprint re-imagines web application architecture. It unifies server and fronte
 
 The example below creates a web page that calculates the area of a rectangle provided width and height. The width and height inputs are automatically synchronized between frontend and backend. And area is automatically calculated when width or height changes.
 
+**Code:**
+
 ```
 //server
 import {app, state, task, from} from "blueprint-server";
@@ -55,7 +57,13 @@ const UI = () => {
   );
 };
 ```
-
+<br />
+**Result:**
+<iframe src="https://rectangle-ui-7y67ff2sba-uc.a.run.app/myApp" frameBorder=0 style="background-color:#f8f8f8;border:1px solid #e1e4e5;width:100%;"></iframe>
+<br />
+**Diagram:**
+<iframe src="https://rectangle-diagram-7y67ff2sba-uc.a.run.app/myApp" frameBorder=0 width="100%" height="300px" style="background-color:#f8f8f8;border:1px solid #e1e4e5;width:100%;"></iframe>
+<br />
 #### How to Get Started?
 
 Get started by following this [tutorial](./gettingStarted.md) to build your first Blueprint web application.

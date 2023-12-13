@@ -18,7 +18,7 @@ The example below creates a web page that calculates the area of a rectangle pro
 import {app, state, task, from} from "blueprint-server";
 const area = (width: number, height: number) =>
   width * height;
-  
+
 const myApp = app(() => {
   const width$ = state("width", 10);
   const height$ = state("height", 15);
@@ -28,7 +28,7 @@ const myApp = app(() => {
     name: "myApp",
     state: [width$, height$],
     events: [],
-    tasks: [task$]
+    tasks: [area$]
   };
 });
 ```

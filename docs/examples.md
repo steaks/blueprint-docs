@@ -8,36 +8,32 @@ This example is a simple application that demonstrates the basics of Blueprint. 
 
 ```typescript
 //server
-import {app, event, state, task, from} from "blueprint-server";
+import {app, state, task, event, from} from "blueprint-server";
 
-const wordCount = (words: string): number => {
-  const trimmedWords = words.trim();
-  return trimmedWords.length === 0 ? 0 : trimmedWords.trim().split(/\s/).length;
+const wordCount = (input: string): number => {
+  const trimmedInput = input.trim();
+  return trimmedInput.length === 0 ? 0 : trimmedInput.trim().split(/\s/).length;
 };
 
-let _clickCount = 0;
-const clickCount = () => {
-  _clickCount = _clickCount + 1;
-  return _clickCount;
-};
+const letters = (input: string): number =>
+  input.trim().length;
 
 const helloWorld = app(() => {
-  const myState$ = state("myState", "Hello State!");
-  const myEvent$ = event("myEvent");
+  const myInput$ = state("myInput", "Hello Input!");
+  const countLetters$ = event("countLetters");
   const wordCount$ = task(
-    from(wordCount, myState$)
+    from(wordCount, myInput$)
   );
-
-  const clickCount$ = task(
-    {name: "clickCount", triggers: [myEvent$]},
-    from(clickCount)
+  const letters$ = task(
+    {name: "letters", triggers: [countLetters$]},
+    from(letters, myInput$)
   );
 
   return {
     name: "helloWorld",
-    state: [myState$],
-    events: [myEvent$],
-    tasks: [wordCount$, clickCount$]
+    state: [myInput$],
+    events: [countLetters$],
+    tasks: [wordCount$, letters$]
   };
 });
 
@@ -49,25 +45,24 @@ export default helloWorld;
 import {app, state, event, task} from "blueprint-react";
 
 const HelloWorld = app("helloWorld");
-const useMyState = state<string>("helloWorld", "myState");
-const useMyEvent = event("helloWorld", "myEvent");
-const useWordCount = task<number>("helloWorld", "wordCount")
-const useClickCount = task<number>("helloWorld", "clickCount");
+const useMyState = state<string>("helloWorld", "myInput");
+const useWordCount = task<number>("helloWorld", "wordCount");
+const useCountLetters = event("helloWorld", "countLetters");
+const useLetters = task<number>("helloWorld", "letters");
 
 const UI = () => {
-  const [myState, setMyState] = useMyState();
-  const [triggerMyEvent] = useMyEvent();
+  const [myInput, setMyState] = useMyState();
   const [wordCount] = useWordCount();
-  const [clickCount] = useClickCount();
-
+  const [countLetters] = useCountLetters();
+  const [letters] = useLetters();
 
   return (
     <HelloWorld>
       <div>Hello World!!</div>
-      <input defaultValue={myState} onChange={e => setMyState(e.target.value)} />
-      <button onClick={triggerMyEvent}>Trigger My Event!</button>
-      <div>Word Count: {wordCount}</div>
-      <div>Click Count: {clickCount || 0}</div>
+      <input defaultValue={myInput} onChange={e => setMyState(e.target.value)}/>
+      <button onClick={countLetters}>Count Letters</button>
+      <div>Word count: {wordCount}</div>
+      <div>Letter count: {letters}</div>
     </HelloWorld>
   );
 };

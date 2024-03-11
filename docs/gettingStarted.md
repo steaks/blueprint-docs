@@ -18,135 +18,44 @@ chmod +x createBlueprint.sh
 
 ## Install Node dependencies, build, and serve
 
-Blueprint recommends using a Makefile to manage scripts for installing, building and serving. The skeleton project comes with a Makefile populated with useful functions. Use these commands to install node dependencies, build, and serve your application.
+Run the commands below to spin up a Blueprint web application with a helloWorld app.
 
 ```shell
 cd {your-app-name}
 make install
 make build
-make run-server # Run in separate terminal.
-make run-ui # Run in separate terminal. Open browser to http://localhost:3000
-make run-blueprint # Run in separate terminal. Open browser to http://localhost:3001
+make run-server
+make run-ui # Run in separate terminal. 
+# Open browser to http://localhost:3000 to see your app. Follow instructions to navigate to the helloWorld app.
+# Open browser to http://localhost:3000/__blueprint__. This will contain diagrams of your architecture that update as you build.
 ```
 
-## Build your app
+## Examine the File Structure
 
-Create an app called "helloWorld." An app encapsulates specific functionality - typically a page or re-usable widget on a website.
+At this point you have a working Blueprint application with a helloWorld app. Examine the helloWorld files listed below as they will be where you code in this tutorial.
 
-### Build the server-side.
+|File Path|Description|
+|----|----|
+|/server/src/apps/helloWorld.ts|Server logic for your app|
+|/ui/src/apps/helloWorld.tsx|UI components for your app|
+|/shared/src/apps/helloWorld.ts|Shared types between the server and ui of your app|
 
-```typescript
-/* /server/src/apps/helloWorld.ts */
-import {app} from "blueprint-server";
-
-const helloWorld = app(() => {
-  return {
-    name: "helloWorld",
-    state: [],
-    events: [],
-    tasks: []
-  };
-});
-
-export default helloWorld;
-```
-
-### Serve your app.
-
-```typescript
-/* /server/src/index.ts */
-import "dotenv/config";
-import {serve} from "blueprint-server";
-import helloWorld from "./apps/helloWorld";
-import session from "./session";
-
-const options = {
-  cors: {origin: process.env.CORS_ORIGIN}
-};
-
-serve({helloWorld}, session, options);
-```
-
-### Hook up the frontend.
-
-```typescript
-/* /ui/src/apps/helloWorld.tsx */
-import {app} from "blueprint-react";
-
-export const HelloWorld = app("helloWorld");
-
-const UI = () => {
-  return (
-    <HelloWorld>
-      <div>Hello World!!</div>
-    </HelloWorld>
-  );
-};
-
-export default UI;
-```
-
-### Route to your app.
-
-```typescript
-/* /ui/src/index.tsx */
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import {Blueprint} from "blueprint-react";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
-import Home from "./home";
-import HelloWorld from "./apps/helloWorld";
-
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
-
-root.render(
-  <React.StrictMode>
-    <Blueprint uri={process.env.REACT_APP_URI}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}/>
-          <Route path="/helloWorld" element={<HelloWorld />} />
-        </Routes>
-      </BrowserRouter>
-    </Blueprint>
-  </React.StrictMode>
-);
-```
-
-### Link to your app on the home page.
-
-```typescript
-/* /ui/src/apps/home.tsx */
-const UI = () => {
-  return (
-    <>
-      <h1>Welcome to Blueprint!</h1>
-      <div>This is the blueprint hello world template. In addition to this page a user profile Blueprint App has been created for you.</div>
-      <br />
-      <a href="/helloWorld">Hello World</a>
-    </>
-  );
-};
-
-export default UI;
-```
+Additionally, notice that helloWorld has been hooked into the infrastructure of your application in `/server/src/index.ts` and `/ui/src/index.tsx`.
 
 ## Build state
 
-### Create state in the server-side of your app.
+State are variables that track information in your app. They are typically inputs from your user. State is automatically synced between your server and ui. Create your first state variable.
 
 ```typescript
 /* /server/src/apps/helloWorld.ts */
 import {app, state} from "blueprint-server";
 
 const helloWorld = app(() => {
-  const myState$ = state("myState", "Hello State!");
+  const myInput$ = state("myInput", "Hello Input!");
 
   return {
     name: "helloWorld",
-    state: [myState$],
+    state: [myInput$],
     events: [],
     tasks: []
   };
@@ -155,22 +64,20 @@ const helloWorld = app(() => {
 export default helloWorld;
 ```
 
-### Hook it up to your frontend.
-
 ```typescript
 /* /ui/src/apps/helloWorld.tsx */
 import {app, state} from "blueprint-react";
 
 const HelloWorld = app("helloWorld");
-const useMyState = state<string>("helloWorld", "myState");
+const useMyState = state<string>("helloWorld", "myInput");
 
 const UI = () => {
-  const [myState, setMyState] = useMyState();
+  const [myInput, setMyState] = useMyState();
 
   return (
     <HelloWorld>
       <div>Hello World!!</div>
-      <input defaultValue={myState} onChange={e => setMyState(e.target.value)} />
+      <input defaultValue={myInput} onChange={e => setMyState(e.target.value)} />
     </HelloWorld>
   );
 };
@@ -178,83 +85,32 @@ const UI = () => {
 export default UI;
 ```
 
-## Build an event
+!!! Note 
+    Server updates are not automatically reflected. `make run-server` compiles and serves your Blueprint server. So CTRL+C and re-run `make run-server` to see changes.
 
-### Create an event in the server-side of your app.
+## Build a task
 
-```typescript
-/* /server/src/apps/helloWorld.ts */
-import {app, event, state} from "blueprint-server";
-
-const helloWorld = app(() => {
-  const myState$ = state("myState", "Hello State!");
-  const myEvent$ = event("myEvent");
-
-  return {
-    name: "helloWorld",
-    state: [myState$],
-    events: [myEvent$],
-    tasks: []
-  };
-});
-
-export default helloWorld;
-```
-
-### Hook it up to your frontend.
-
-```typescript
-/* /ui/src/apps/helloWorld.tsx */
-import {app, state, event} from "blueprint-react";
-
-const HelloWorld = app("helloWorld");
-const useMyState = state<string>("helloWorld", "myState");
-const useMyEvent = event("helloWorld", "myEvent");
-
-const UI = () => {
-  const [myState, setMyState] = useMyState();
-  const [triggerMyEvent] = useMyEvent();
-
-  return (
-    <HelloWorld>
-      <div>Hello World!!</div>
-      <input defaultValue={myState} onChange={e => setMyState(e.target.value)} />
-      <button onClick={triggerMyEvent}>Trigger My Event!</button>
-    </HelloWorld>
-  );
-};
-
-export default UI;
-```
-
-## Build your first task
-
-Build a task that counts the number of works in your myState$ variable. 
-
-### Create a task in the server-side of your app.
-
-Write a javascript function that counts the number of words provided a string. Then invoke that function with a task that is triggered when myState$ changes.
+Tasks are functions (can be async) that can be triggered by events or state changes. Tasks are often used to fetch data from your database, insert data into your db, or run an intense calculation. For your first task you will build a word counter.
 
 ```typescript
 /* /server/src/apps/helloWorld.ts */
-import {app, event, state, task, from} from "blueprint-server";
+import {app, state, task, from} from "blueprint-server";
 
-const wordCount = (words: string): number => {
-  const trimmedWords = words.trim();
-  return trimmedWords.length === 0 ? 0 : trimmedWords.trim().split(/\s/).length;
+const wordCount = (input: string): number => {
+  const trimmedInput = input.trim();
+  return trimmedInput.length === 0 ? 0 : trimmedInput.trim().split(/\s/).length;
 };
 
 const helloWorld = app(() => {
-  const myState$ = state("myState", "Hello State!");
-  const myEvent$ = event("myEvent");
+  const myInput$ = state("myInput", "Hello Input!");
   const wordCount$ = task(
-    from(wordCount, myState$)
+    from(wordCount, myInput$)
   );
 
   return {
     name: "helloWorld",
-    state: [myState$],
-    events: [myEvent$],
+    state: [myInput$],
+    events: [],
     tasks: [wordCount$]
   };
 });
@@ -262,29 +118,23 @@ const helloWorld = app(() => {
 export default helloWorld;
 ```
 
-
-### Hook it up to your frontend.
-
 ```typescript
 /* /ui/src/apps/helloWorld.tsx */
-import {app, state, event, task} from "blueprint-react";
+import {app, state} from "blueprint-react";
 
 const HelloWorld = app("helloWorld");
-const useMyState = state<string>("helloWorld", "myState");
-const useMyEvent = event("helloWorld", "myEvent");
-const useWordCount = task<number>("helloWorld", "wordCount")
+const useMyState = state<string>("helloWorld", "myInput");
+const useWordCount = state<number>("helloWorld", "wordCount");
 
 const UI = () => {
-  const [myState, setMyState] = useMyState();
-  const [triggerMyEvent] = useMyEvent();
+  const [myInput, setMyState] = useMyState();
   const [wordCount] = useWordCount();
 
   return (
     <HelloWorld>
       <div>Hello World!!</div>
-      <input defaultValue={myState} onChange={e => setMyState(e.target.value)} />
-      <button onClick={triggerMyEvent}>Trigger My Event!</button>
-      <div>Word Count: {wordCount}</div>
+      <input defaultValue={myInput} onChange={e => setMyState(e.target.value)} />
+      <div>Word count: {wordCount}</div>
     </HelloWorld>
   );
 };
@@ -292,78 +142,71 @@ const UI = () => {
 export default UI;
 ```
 
-## Build your second task 
+!!! Note
+    Server updates are not automatically reflected. `make run-server` compiles and serves your Blueprint server. So CTRL+C and re-run `make run-server` to see changes.
 
-Build a task that tracks the number of clicks tied to myEvent$.
+## Build an event
 
-### Create a task in the server-side of your app.
-
-Track the number of clicks with a variable _clickCount. And use a task to increment _clickCount everytime myEvent$ is triggered.
+Events are signals that can be used to trigger tasks. Often you will fire events when a user clicks a button. Build a button that triggers a task which counts the number of letters in your input.
 
 ```typescript
 /* /server/src/apps/helloWorld.ts */
-import {app, event, state, task, from} from "blueprint-server";
+import {app, state, task, event, from} from "blueprint-server";
 
-const wordCount = (words: string): number => {
-  const trimmedWords = words.trim();
-  return trimmedWords.length === 0 ? 0 : trimmedWords.trim().split(/\s/).length;
+const wordCount = (input: string): number => {
+  const trimmedInput = input.trim();
+  return trimmedInput.length === 0 ? 0 : trimmedInput.trim().split(/\s/).length;
 };
 
-let _clickCount = 0;
-const clickCount = () => {
-  _clickCount = _clickCount + 1;
-  return _clickCount;
-};
+const letters = (input: string): number =>
+  input.trim().length;
 
 const helloWorld = app(() => {
-  const myState$ = state("myState", "Hello State!");
-  const myEvent$ = event("myEvent");
+  const myInput$ = state("myInput", "Hello Input!");
+  const countLetters$ = event("countLetters");
   const wordCount$ = task(
-    from(wordCount, myState$)
+    from(wordCount, myInput$)
   );
-
-  const clickCount$ = task(
-    {name: "clickCount", triggers: [myEvent$]},
-    from(clickCount)
+  const letters$ = task(
+    {name: "letters", triggers: [countLetters$]},
+    from(letters, myInput$)
   );
 
   return {
     name: "helloWorld",
-    state: [myState$],
-    events: [myEvent$],
-    tasks: [wordCount$, clickCount$]
+    state: [myInput$],
+    events: [countLetters$],
+    tasks: [wordCount$, letters$]
   };
 });
 
 export default helloWorld;
 ```
 
-### Hook it up to the frontend.
 
 ```typescript
 /* /ui/src/apps/helloWorld.tsx */
 import {app, state, event, task} from "blueprint-react";
 
 const HelloWorld = app("helloWorld");
-const useMyState = state<string>("helloWorld", "myState");
-const useMyEvent = event("helloWorld", "myEvent");
-const useWordCount = task<number>("helloWorld", "wordCount")
-const useClickCount = task<number>("helloWorld", "clickCount");
+const useMyState = state<string>("helloWorld", "myInput");
+const useWordCount = task<number>("helloWorld", "wordCount");
+const useCountLetters = event("helloWorld", "countLetters");
+const useLetters = task<number>("helloWorld", "letters");
 
 const UI = () => {
-  const [myState, setMyState] = useMyState();
-  const [triggerMyEvent] = useMyEvent();
+  const [myInput, setMyState] = useMyState();
   const [wordCount] = useWordCount();
-  const [clickCount] = useClickCount();
-
+  const [countLetters] = useCountLetters();
+  const [letters] = useLetters();
 
   return (
     <HelloWorld>
       <div>Hello World!!</div>
-      <input defaultValue={myState} onChange={e => setMyState(e.target.value)} />
-      <button onClick={triggerMyEvent}>Trigger My Event!</button>
-      <div>Word Count: {wordCount}</div>
-      <div>Click Count: {clickCount || 0}</div>
+      <input defaultValue={myInput} onChange={e => setMyState(e.target.value)}/>
+      <button onClick={countLetters}>Count Letters</button>
+      <div>Word count: {wordCount}</div>
+      <div>Letter count: {letters}</div>
     </HelloWorld>
   );
 };
@@ -371,6 +214,9 @@ const UI = () => {
 export default UI;
 ```
 
+!!! Note
+    Server updates are not automatically reflected. `make run-server` compiles and serves your Blueprint server. So CTRL+C and re-run `make run-server` to see changes.
+
 ## View the Control Flow Diagram
 
-Go to http://localhost:3001. Since Blueprint tracks your control-flow it is able to display an interactive control-flow diagram.
+Navigate to [http://localhost:3000/\__blueprint__](http://localhost:3000/__blueprint__) to see the interactive architecture diagram of the app you built.

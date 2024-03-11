@@ -1,11 +1,14 @@
 # Welcome to Blueprint
-*The ergonomic web application framework*
+*The push-based web application framework*
 
-Blueprint re-imagines web application architecture. It unifies server and frontend code so developers can build in a cohesive, declarative, and ergonomic code-base. Additionally, since all control-flow is encapsulated by Blueprint it creates a visual, interactive control-flow diagram to display the architecture of your application.
+Blueprint re-imagines web application development by adopting a push-based architecture, as opposed to the traditional pull-based architecture. This approach streamlines state management, synchronizing data, and ui reactivity. 
 
-- **Cohesive - ** Build frontend and server code using the same style and system.
-- **Declarative - ** Build declarative functions with complex control flows logic.
-- **Ergonomic - ** Build code that matches your application flow. 
+#### Principals
+
+**Declarative - **Build declarative functions with Blueprint's push-based architecture.<br/>
+**Ergonomic - ** Build ergonomic code with Blueprint's that reads intuitively.<br/>
+**Cohesive - ** Blueprint is full-stack. Build server and ui code with the same style.<br/>
+**Visual - ** Blueprint generates an interactive visual diagram of your code architecture to provide clarity and quick understanding of what you've built.
 
 #### A simple example
 

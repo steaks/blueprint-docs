@@ -1,14 +1,20 @@
 # Welcome to Blueprint
-*The push-based web application framework*
+*The push-based web server and frontend framework.*
 
-Blueprint re-imagines web application development by adopting a push-based architecture, as opposed to the traditional pull-based architecture. This approach streamlines state management, synchronizing data, and ui reactivity. 
+Blueprint is a full-stack web application framework. It combines server and frontend state/events into a single push-based architecture. This approach streamlines state management, synchronizing data, and ui reactivity. 
 
-#### Principals
+#### Principles 
 
-**Declarative - **Build declarative functions with Blueprint's push-based architecture.<br/>
-**Ergonomic - ** Build ergonomic code with Blueprint's that reads intuitively.<br/>
-**Cohesive - ** Blueprint is full-stack. Build server and ui code with the same style.<br/>
+**Declarative - **Build declarative functions without worrying about how they are called in the system.<br/>
+**Ergonomic - ** Build ergonomic code that reads how your application works, not technical details.<br/>
+**Cohesive - ** Build server and ui code in the same system with the same style.<br/>
 **Visual - ** Blueprint generates an interactive visual diagram of your code architecture to provide clarity and quick understanding of what you've built.
+
+#### Why Blueprint
+
+As web applications become more complex developers disproportionally work on the logistics rather than business logic. If you've built a web application you've likely noticed how much time you spend managing state updates, coordinating data between components, debugging ui responsiveness, etc. And you've probably explored complex state management libraries like Redux, RxJS, and MobX with varying degrees of success.
+
+Blueprint handles data and state management logistics. Blueprint developers can just trust state and coordinate data with a few lines of code.
 
 #### A simple example
 

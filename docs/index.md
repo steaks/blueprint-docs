@@ -1,5 +1,5 @@
 # Welcome to Blueprint
-*The push-based web server and frontend framework.*
+*The full-stack push-based web server and frontend framework.*
 
 Blueprint is a full-stack web application framework. It combines server and frontend state/events into a single push-based architecture. This approach streamlines state management, synchronizing data, and ui reactivity. 
 

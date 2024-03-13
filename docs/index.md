@@ -1,5 +1,5 @@
 # Welcome to Blueprint
-*The push-based web application framework*
+*The full-stack push-based web application framework*
 
 Blueprint re-imagines web application development by adopting a push-based architecture, as opposed to the traditional pull-based architecture. This approach streamlines state management, synchronizing data, and ui reactivity. 
 

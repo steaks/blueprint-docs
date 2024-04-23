@@ -1,10 +1,22 @@
-# Examples 
+# Examples
 
-## Hello World
+## Live Examples
 
-This example is a simple application that demonstrates the basics of Blueprint. Below are code snippets that show the core code of the application. You can also browse the full code [here](https://github.com/steaks/blueprint/tree/main/templates/helloWorld) or run the application locally [here](#run-the-application-locally).
+| Example                      | Website                                                       | Diagram                                                                    | Code                                                                          |
+|------------------------------|---------------------------------------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| Simple Rectangle Application | [Website](https://rectangle-ui-7y67ff2sba-uc.a.run.app/myApp) | [Diagram](https://rectangle-ui-7y67ff2sba-uc.a.run.app/__blueprint__)      | [Code](https://github.com/steaks/blueprint/tree/main/examples/rectangle)      |
+| User Management Application  | [Website](https://usermanagement-ui-7y67ff2sba-uc.a.run.app)  | [Diagram](https://usermanagement-ui-7y67ff2sba-uc.a.run.app/__blueprint__) | [Code](https://github.com/steaks/blueprint/tree/main/examples/userManagement) |
 
-### Code Snippets
+## More Examples
+
+### Hello World
+
+This example is a simple application that demonstrates the basics of Blueprint. Below are code snippets that show the
+core code of the application. You can also browse the full
+code [here](https://github.com/steaks/blueprint/tree/main/templates/helloWorld) or run the application
+locally [here](#run-the-application-locally).
+
+#### Code Snippets
 
 ```typescript
 //server
@@ -58,19 +70,37 @@ const UI = () => {
 
   return (
     <HelloWorld>
-      <div>Hello World!!</div>
-      <input defaultValue={myInput} onChange={e => setMyState(e.target.value)}/>
-      <button onClick={countLetters}>Count Letters</button>
-      <div>Word count: {wordCount}</div>
-      <div>Letter count: {letters}</div>
-    </HelloWorld>
-  );
+      <div>Hello
+  World!! < /div>
+  < input
+  defaultValue = {myInput}
+  onChange = {e
+=>
+  setMyState(e.target.value)
+}
+  />
+  < button
+  onClick = {countLetters} > Count
+  Letters < /button>
+  < div > Word
+  count: {
+    wordCount
+  }
+  </div>
+  < div > Letter
+  count: {
+    letters
+  }
+  </div>
+  < /HelloWorld>
+)
+  ;
 };
 
 export default UI;
 ```
 
-### Run the application locally
+#### Run the application locally
 
 ```shell
 wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
@@ -83,11 +113,14 @@ make run-server
 make run-ui # Run in separate terminal. Open browser to http://localhost:3000
 ```
 
-## User Profile
+### User Profile
 
-This example is an application with that allows a user to view and edit their email, first name, and last name on a user profile page. Below are code snippets that show the core code of the application. You can also browse the full code [here](https://github.com/steaks/blueprint/tree/main/templates/helloWorld) or run the application locally [here](#run-the-application-locally_1).
+This example is an application with that allows a user to view and edit their email, first name, and last name on a user
+profile page. Below are code snippets that show the core code of the application. You can also browse the full
+code [here](https://github.com/steaks/blueprint/tree/main/templates/helloWorld) or run the application
+locally [here](#run-the-application-locally_1).
 
-### Code Snippets
+#### Code Snippets
 
 ```typescript
 //server
@@ -145,32 +178,67 @@ const UI = () => {
 
   return (
     <UserProfile>
-      <a href="/">&lt; Home</a>
-      <h1>User Profile!</h1>
-      <strong>User:</strong>
-      <div>Email: {user?.email}</div>
-      <div>First name: {user?.firstName}</div>
-      <div>Last name: {user?.lastName}</div>
-      <hr/>
-      <strong>Edit:</strong>
-      <div>
-        <input defaultValue={email} onChange={e => setEmail(e.currentTarget.value)} placeholder="Email"/>
-      </div>
-      <div>
-        <input defaultValue={firstName} onChange={e => setFirstName(e.currentTarget.value)} placeholder="First Name"/>
-      </div>
-      <div>
-        <input defaultValue={lastName} onChange={e => setLastName(e.currentTarget.value)} placeholder="Last Name"/>
-      </div>
-      <button onClick={save}>Save</button>
-    </UserProfile>
-  );
+      <a href = "/" > &lt;Home</a>
+      < h1 > User
+  Profile! < /h1>
+  < strong > User
+:
+  </strong>
+  < div > Email
+:
+  {
+    user?.email
+  }
+  </div>
+  < div > First
+  name: {
+    user?.firstName
+  }
+  </div>
+  < div > Last
+  name: {
+    user?.lastName
+  }
+  </div>
+  < hr / >
+  <strong>Edit
+:
+  </strong>
+  < div >
+  <input defaultValue = {email}
+  onChange = {e
+=>
+  setEmail(e.currentTarget.value)
+}
+  placeholder = "Email" / >
+  </div>
+  < div >
+  <input defaultValue = {firstName}
+  onChange = {e
+=>
+  setFirstName(e.currentTarget.value)
+}
+  placeholder = "First Name" / >
+  </div>
+  < div >
+  <input defaultValue = {lastName}
+  onChange = {e
+=>
+  setLastName(e.currentTarget.value)
+}
+  placeholder = "Last Name" / >
+    </div>
+    < button
+  onClick = {save} > Save < /button>
+    < /UserProfile>
+)
+  ;
 };
 
 export default UI;
 ```
 
-### Run the application locally
+#### Run the application locally
 
 ```shell
 wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
@@ -183,18 +251,22 @@ make run-server
 make run-ui # Run in separate terminal. Open browser to http://localhost:3000
 ```
 
-## Rectangle
+### Rectangle
 
-This example is a simple application that calculates the area of a rectangle provided width and height. Below are code snippets that show the core code of the application. You can also browse the full code [here](https://github.com/steaks/blueprint/tree/main/templates/rectangle) or run the application locally [here](#run-the-application-locally_2).
+This example is a simple application that calculates the area of a rectangle provided width and height. Below are code
+snippets that show the core code of the application. You can also browse the full
+code [here](https://github.com/steaks/blueprint/tree/main/templates/rectangle) or run the application
+locally [here](#run-the-application-locally_2).
 
-### Code Snippets
+#### Code Snippets
 
 ```typescript
 //server
 import {app, state, task, from} from "blueprint-server";
+
 const area = (width: number, height: number) =>
   width * height;
-  
+
 const myApp = app(() => {
   const width$ = state("width", 10);
   const height$ = state("height", 15);
@@ -226,17 +298,34 @@ const UI = () => {
 
   return (
     <MyApp>
-      <input defaultValue={width} onChange={e => setWidth(e.target.value)} />
-      <input defaultValue={height} onChange={e => setHeight(e.target.value)} />
-      <div>Area of Rectangle: {area}</div>
-    </MyApp>
-  );
+      <input defaultValue = {width}
+  onChange = {e
+=>
+  setWidth(e.target.value)
+}
+  />
+  < input
+  defaultValue = {height}
+  onChange = {e
+=>
+  setHeight(e.target.value)
+}
+  />
+  < div > Area
+  of
+  Rectangle: {
+    area
+  }
+  </div>
+  < /MyApp>
+)
+  ;
 };
 
 export default UI;
 ```
 
-### Run the application locally
+#### Run the application locally
 
 ```shell
 wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
@@ -249,9 +338,10 @@ make run-server
 make run-ui # Run in separate terminal. Open browser to http://localhost:3000
 ```
 
-## User Management
+### User Management
 
-This example is a more complex application that manages users. Browse the code on [github](https://github.com/steaks/blueprint/tree/main/examples/userManagement) or run the application locally.
+This example is a more complex application that manages users. Browse the code
+on [github](https://github.com/steaks/blueprint/tree/main/examples/userManagement) or run the application locally.
 
 ```shell
 wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh

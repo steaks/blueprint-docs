@@ -1,10 +1,19 @@
 # Examples 
 
-## Hello World
+## Live Examples
+
+| Example                      | Website                                                       | Diagram                                                                    | Code                                                                          |
+|------------------------------|---------------------------------------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| Simple Rectangle Application | [Website](https://rectangle-ui-7y67ff2sba-uc.a.run.app/myApp) | [Diagram](https://rectangle-ui-7y67ff2sba-uc.a.run.app/__blueprint__)      | [Code](https://github.com/steaks/blueprint/tree/main/examples/rectangle)      |
+| User Management Application  | [Website](https://usermanagement-ui-7y67ff2sba-uc.a.run.app)  | [Diagram](https://usermanagement-ui-7y67ff2sba-uc.a.run.app/__blueprint__) | [Code](https://github.com/steaks/blueprint/tree/main/examples/userManagement) |
+
+## More Examples
+
+### Hello World
 
 This example is a simple application that demonstrates the basics of Blueprint. Below are code snippets that show the core code of the application. You can also browse the full code [here](https://github.com/steaks/blueprint/tree/main/templates/helloWorld) or run the application locally [here](#run-the-application-locally).
 
-### Code Snippets
+#### Code Snippets
 
 ```typescript
 //server
@@ -70,7 +79,7 @@ const UI = () => {
 export default UI;
 ```
 
-### Run the application locally
+#### Run the application locally
 
 ```shell
 wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
@@ -83,11 +92,11 @@ make run-server
 make run-ui # Run in separate terminal. Open browser to http://localhost:3000
 ```
 
-## User Profile
+### User Profile
 
 This example is an application with that allows a user to view and edit their email, first name, and last name on a user profile page. Below are code snippets that show the core code of the application. You can also browse the full code [here](https://github.com/steaks/blueprint/tree/main/templates/helloWorld) or run the application locally [here](#run-the-application-locally_1).
 
-### Code Snippets
+#### Code Snippets
 
 ```typescript
 //server
@@ -170,7 +179,7 @@ const UI = () => {
 export default UI;
 ```
 
-### Run the application locally
+#### Run the application locally
 
 ```shell
 wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
@@ -183,11 +192,11 @@ make run-server
 make run-ui # Run in separate terminal. Open browser to http://localhost:3000
 ```
 
-## Rectangle
+### Rectangle
 
 This example is a simple application that calculates the area of a rectangle provided width and height. Below are code snippets that show the core code of the application. You can also browse the full code [here](https://github.com/steaks/blueprint/tree/main/templates/rectangle) or run the application locally [here](#run-the-application-locally_2).
 
-### Code Snippets
+#### Code Snippets
 
 ```typescript
 //server
@@ -236,7 +245,7 @@ const UI = () => {
 export default UI;
 ```
 
-### Run the application locally
+#### Run the application locally
 
 ```shell
 wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
@@ -249,7 +258,7 @@ make run-server
 make run-ui # Run in separate terminal. Open browser to http://localhost:3000
 ```
 
-## User Management
+### User Management
 
 This example is a more complex application that manages users. Browse the code on [github](https://github.com/steaks/blueprint/tree/main/examples/userManagement) or run the application locally.
 

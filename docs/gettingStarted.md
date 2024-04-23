@@ -13,7 +13,7 @@ Download and execute the `createBlueprint.sh` to initialize a new project.
 ```shell
 wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
 chmod +x createBlueprint.sh
-./createBlueprint.sh {your-app-name}
+./createBlueprint.sh MyApp
 ```
 
 ## Install Node dependencies, build, and serve
@@ -21,7 +21,7 @@ chmod +x createBlueprint.sh
 Run the commands below to spin up a Blueprint web application with a helloWorld app.
 
 ```shell
-cd {your-app-name}
+cd MyApp
 make install
 make build
 make run-server

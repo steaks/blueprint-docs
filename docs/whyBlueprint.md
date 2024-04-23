@@ -2,7 +2,9 @@
 
 Managing state and data flow in web applications is difficult, especially as apps become more complex. Blueprint alleviates those headaches for you. Blueprint replaces props drilling, complex state systems, hacky useEffects, etc.
 
-We'll use a user management app to show how Blueprint works. Loading users in user management system is simple at first. But it becomes complex when you add search, update, add, and delete functionality. We'll examine how Blueprint helps you build simple code with complex state and data flow interactions.
+We'll use a user management app to show how Blueprint works. Loading users in user management system is simple at first. But it becomes complex when you add search, update, add, and delete functionality. Blueprint helps you build simple code with complex state and data flow interactions.
+
+Browse the [live example](https://usermanagement-ui-7y67ff2sba-uc.a.run.app/) or [full codebase](https://github.com/steaks/blueprint/tree/main/examples/userManagement) if you'd prefer to skip the explanation.
 
 ## Step 1: Load Users
 Create a task that loads users from the database and displays them in an html table.

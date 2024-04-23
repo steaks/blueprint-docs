@@ -79,9 +79,8 @@ chmod +x createBlueprint.sh
 cd MyHelloWorldApplication
 make install
 make build
-make run-server # Run in separate terminal.
+make run-server
 make run-ui # Run in separate terminal. Open browser to http://localhost:3000
-make run-blueprint # Run in separate terminal. Open browser to http://localhost:3001
 ```
 
 ## User Profile
@@ -180,9 +179,8 @@ chmod +x createBlueprint.sh
 cd MyUserProfileApplication
 make install
 make build
-make run-server # Run in separate terminal.
+make run-server
 make run-ui # Run in separate terminal. Open browser to http://localhost:3000
-make run-blueprint # Run in separate terminal. Open browser to http://localhost:3001
 ```
 
 ## Rectangle
@@ -247,7 +245,21 @@ chmod +x createBlueprint.sh
 cd MyRectangleApplication
 make install
 make build
-make run-server # Run in separate terminal.
+make run-server
 make run-ui # Run in separate terminal. Open browser to http://localhost:3000
-make run-blueprint # Run in separate terminal. Open browser to http://localhost:3001
+```
+
+## User Management
+
+This example is a more complex application that manages users. Browse the code on [github](https://github.com/steaks/blueprint/tree/main/examples/userManagement) or run the application locally.
+
+```shell
+wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
+chmod +x createBlueprint.sh
+./createBlueprint.sh -t rectangle MyRectangleApplication
+cd MyRectangleApplication
+make install
+make build
+make run-server
+make run-ui # Run in separate terminal. Open browser to http://localhost:3000
 ```

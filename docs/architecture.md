@@ -4,26 +4,29 @@
 
 **App -** Logical grouping of features - typically a website page or re-usable widget.
 
-**Events -** Signals that can trigger tasks.
+**Events -** Signals that can trigger queries ro effects.
 
-**State -** Variables that track state. State changes can trigger tasks.
+**State -** Variables that track state. State changes can trigger queries or effects.
 
-**Tasks -** Declarative functions that may be triggered by events or state changes
+**Queries -** Declarative functions that fetch data and may be triggered by events or state changes.
+
+**Effects -** Declarative functions that cause side effects and may be triggered by events or state changes.
 
 ### App
 
-An app is the organizational structure for building. Typically, you will build apps that correspond with a page or re-usable widget in the browser. On the server you will create an app that contains state, events, and tasks. On the frontend you will create a corresponding React component that wraps the ui elements for your app.
+An app is the organizational structure for building. Typically, you will build apps that correspond with a page or re-usable widget in the browser. On the server you will create an app that contains state, events, queries, or effects. On the frontend you will create a corresponding React component that wraps the ui elements for your app.
 
 ```typescript
 //server
 const myApp = app(() => {
-  // Add state, events, and tasks
+  // Add state, events, queiries, and effects 
   
   return {
     name: "myApp",
     state: [], //TODO state 
     events: [], //TODO events
-    tasks: [] //TODO tasks 
+    queries: [], //TODO queries
+    effects: [] //TODO effects
   };
 });
 ```
@@ -43,18 +46,19 @@ const UI = () => {
 
 ### Events
 
-Events are signals that can trigger tasks. They are useful for responding to button clicks, link clicks, toggle switches, etc. You can trigger events from either the frontend or backend. See [tasks](#tasks) for details about triggering and subscribing to events.
+Events are signals that can trigger queries or effects. They are useful for responding to button clicks, link clicks, toggle switches, etc. You can trigger events from either the frontend or backend. See [queries](#queries) for details about triggering and subscribing to events.
 
 ```typescript
 //server
 const myApp = app(() => {
-  const myEvent$ = event("myEvent"); 
+  const myEvent$ = useEvent("myEvent"); 
   
   return {
     name: "myApp",
     state: [], //TODO state 
     events: [myEvent$], //TODO events
-    tasks: [] //TODO tasks 
+    queries: [], //TODO queries
+    effects: [] //TODO effects
   };
 });
 ```
@@ -82,13 +86,14 @@ State is synchronized across the server and frontend. On the server you can crea
 ```typescript
 //server
 const myApp = app(() => {
-  const myState$ = state<string>("myState");
+  const myState$ = useState<string>("myState");
 
   return {
     name: "myApp",
     state: [myState$], //TODO state 
     events: [], //TODO events
-    tasks: [] //TODO tasks 
+    queries: [], //TODO queries
+    effects: [] //TODO effects
   };
 });
 ```
@@ -109,34 +114,35 @@ const MyAppUI = () => {
 
 ```
 
-### Tasks
+### Queries
 
-Tasks wrap typescript functions. Tasks can be triggered by events or state changes. And they can inject state variables as parameters into the function being invoked.
+Queries wrap typescript functions. Queries can be triggered by events or state changes. And they can inject state variables as parameters into the function being invoked.
 
-#### Simple task
+#### Simple query
 
-This simple task wraps the function `myFunc` and will be invoked when the app is initialized.
+This simple query wraps the function `myFunc` and will be invoked when the app is initialized.
 
 ```typescript
 //server
 const myFunc = () => 
-  console.log("Hello World");
+  "Hello World";
 
 const myApp = app(() => {
-  const myFunc$ = task(from(myFunc));
+  const myFunc$ = useQuery(myFunc);
 
   return {
     name: "myApp",
     state: [], //TODO state 
     events: [], //TODO events
-    tasks: [myFunc$] //TODO tasks 
+    queries: [myFunc$], //TODO queries
+    effects: [] //TODO effects
   };
 });
 ```
 
-#### Task with asyncronous function
+#### Queries with asyncronous function
 
-Tasks work with asyncronous functions natively.
+Queries work with asyncronous functions natively.
 
 ```typescript
 //server
@@ -144,41 +150,43 @@ const myFunc = (): Promise<string> =>
   Promise.resolve("Hello World");
 
 const myApp = app(() => {
-  const myFunc$ = task(from(myFunc));
+  const myFunc$ = useQuery(myFunc);
 
   return {
     name: "myApp",
     state: [], //TODO state 
     events: [], //TODO events
-    tasks: [myFunc$] //TODO tasks 
+    queries: [myFunc$], //TODO queries
+    effects: [] //TODO effects
   };
 });
 ```
 
-#### Task injected with state
+#### Queries injected with state
 
-This task wraps the myFunc function and passes the variable tracked by the a$ into the function when invoked. Tasks trigger when state it depends on changes or on initialization if it doesn't depend on any state. This task will be triggered when a$ changes.
+This query wraps the myFunc function and passes the variable tracked by the a$ into the function when invoked. Queries trigger when state it depends on changes or on initialization if it doesn't depend on any state. This query will be triggered when a$ changes.
 
 ```typescript
 const myFunc = (a: string) =>
   console.log(`a: ${a}`);
 
 const myApp = app(() => {
-  const a$ = state<string>();
-  const myFunc$ = task(from(myFunc, a$));
+  const a$ = useState<string>();
+  const myFunc$ = useQuery(myFunc, [a$]);
 
   return {
     name: "myApp",
     state: [a$], //TODO state 
     events: [], //TODO events
-    tasks: [myFunc$] //TODO tasks 
+    queries: [myFunc$], //TODO queries
+    effects: [] //TODO effects
   };
 });
 ```
 
-#### Tasks triggered by events
+#### Queries triggered by events
 
-Tasks can be triggered by events specified in the `triggers` option. This task will be triggered by myEvent$.
+Queries can be triggered by events specified in the `triggers` option. This query will be triggered by myEvent$.
 
 ```typescript
 //server
@@ -186,24 +194,22 @@ const myFunc = () =>
   console.log("Hello World");
 
 const myApp = app(() => {
-  const myEvent$ = event();
-  const myFunc$ = task(
-    {name: "myFunc", triggers: [myEvent$]},
-    from(myFunc)
-  );
+  const myEvent$ = useEvent();
+  const myFunc$ = useQuery(myFunc, [], {triggers: [myEvent$]});
 
   return {
     name: "myApp",
     state: [], //TODO state 
     events: [myEvent$], //TODO events
-    tasks: [myFunc$] //TODO tasks 
+    queries: [myFunc$], //TODO queries
+    effects: [] //TODO effects
   };
 });
 ```
 
-#### Tasks can trigger events
+#### Queries can trigger events
 
-After a task has completed it's function it can trigger downstream events. This task invokes myFunc. Then it triggers myEvent$.
+After a query has completed it's function it can trigger downstream events. This query invokes myFunc. Then it triggers myEvent$.
 
 ```typescript
 //server
@@ -211,31 +217,26 @@ const myFunc = () =>
   console.log("Hello World");
 
 const myApp = app(() => {
-  const myEvent$ = event();
-  const myFunc$ = task(
-    {name: "myFunc"},
-    from(myFunc),
-    trigger(myEvent$)
-  );
+  const myEvent$ = useEvent();
+  const myFunc$ = useQuery(myFunc, [], {onSuccess: [myEvent$]});
 
   return {
     name: "myApp",
     state: [], //TODO state 
     events: [myEvent$], //TODO events
-    tasks: [myFunc$] //TODO tasks 
+    queries: [myFunc$], //TODO queries
+    effects: [myFunc$], //TODO effects
   };
 });
 ```
 
-#### Tasks are also events and state
-
-A task is considered to be both an event and state. So you can trigger a task just like you can trigger an event. And you can inject the state of the result of a task just like you'd inject state.
+#### Queries are also events and state
 
 #### File Structure
 
 Blueprint has four top-level directories: scripts, server, shared, and ui.
 
-**scripts** - Build scripts used by the makefile for tasks like installing, compiling, and cleaning<br/>
+**scripts** - Build scripts used by the makefile for queries like installing, compiling, and cleaning<br/>
 **server** - Code for the server-side of your application. This is where you'll write your business logic.<br/>
 **shared** - Code shared between your server and ui. Include types shared between your server and ui.<br/>
 **ui** - Code for your user interface. Typically, you'll include display logic, preferring to put business logic on your server.

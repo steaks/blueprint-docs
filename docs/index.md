@@ -1,42 +1,42 @@
 # Welcome to Blueprint
-*Simple state and data management for web applications*
+*Hooks for the Backend*
 
-Blueprint is a full-stack web application framework that simplifies state and data management. Blueprint handles data synchronization, data flow dependencies and race-conditions so devs can focus on business logic. See [why blueprint](./whyBlueprint.md) for a more comprehensive explanation of why Blueprint outperforms traditional web application frameworks.
+Blueprint is web-server. It is designed to be picked up quickly by React developers. It uses hooks, reactivity, and is aware of your frontend state, so you can build your server just like you build your frontend. See [why blueprint](./whyBlueprint.md) for a more.
 
 #### A simple example
-
-The example below creates a web page that calculates the area of a rectangle provided width and height. Blueprint recognizes area should automatically re-calculated when width or height change.
 
 **Code:**
 
 ```
 //server
-import {app, state, task, from} from "blueprint-server";
+import {app, useState, useQuery} from "blueprint-server";
+
 const area = (width: number, height: number) =>
   width * height;
 
 const myApp = app(() => {
-  const width$ = state("width", 10);
-  const height$ = state("height", 15);
-  const area$ = task(from(area, width$, height$));
+  const width$ = useState("width", 10);
+  const height$ = useState("height", 15);
+  const area$ = useQuery(area, [width$, height$]);
 
   return {
     name: "myApp",
     state: [width$, height$],
-    events: [],
-    tasks: [area$]
+    queries: [area$]
   };
 });
+
+export default myApp;
 ```
 
 ```typescript
 //frontend
-import {app, state, task} from "blueprint-react";
+import {app, state, query} from "blueprint-react";
 
 const MyApp = app("myApp");
 const useWidth = state<number>("myApp", "width");
 const useHeight = state<number>("myApp", "height");
-const useArea = task<number>("myApp", "area");
+const useArea = query<number>("myApp", "area");
 
 const UI = () => {
   const [width, setWidth] = useWidth();

@@ -7,7 +7,7 @@ We'll use a user management app to show how Blueprint works. Loading users in us
 Browse the [live example](https://usermanagement-ui-7y67ff2sba-uc.a.run.app/) or [full codebase](https://github.com/steaks/blueprint/tree/main/examples/userManagement) if you'd prefer to skip the explanation.
 
 ## Step 1: Load Users
-Create a task that loads users from the database and displays them in an html table.
+Create a query that loads users from the database and displays them in an html table.
 
 ```
 //server
@@ -15,16 +15,14 @@ const users = async (): Promise<User[]> =>
   await db.map<User>("SELECT id, name FROM users ORDER BY name", {}, row => ({id: row.id, name: row.name}));
 
 const team = app(() => {
-  const users$ = task(
-    from(users)
-  );
+  const users$ = useQuery(users);
 });
 ```
 
 ```
 //ui
 const Team = app("team")
-const useUsers = task<User[]>("team", "users");
+const useUsers = query<User[]>("team", "users");
 
 const UI = () => {
   const [users] = useUsers();
@@ -37,7 +35,7 @@ const UI = () => {
 ```
 
 ## Step 2: Add Search
-Add a search input. Reload users when the search input changes. Implementing this in Blueprint is easy. Just plug in a search state to the task. Tasks automatically execute when a state input changes. So users will automatically re-load when the search input changes.
+Add a search input. Reload users when the search input changes. Implementing this in Blueprint is easy. Just plug in a search state to the query. Queries automatically execute when a state input changes. So users will automatically re-load when the search input changes.
 
 ```
 //server
@@ -45,10 +43,8 @@ const users = async (search: string): Promise<User[]> =>
   await db.map<User>(`SELECT id, name FROM users WHERE name LIKE '%{$search}%' ORDER BY name`, {}, row => ({id: row.id, name: row.name}));
 
 const team = app(() => {
-  const search$ = state("search");
-  const users$ = task(
-    from(users, search$)
-  );
+  const search$ = useState("search");
+  const users$ = useQuery(users, [search$])
 });
 ```
 
@@ -57,7 +53,7 @@ const team = app(() => {
 const Team = app("team")
 
 const useSearch = state<string>("team", "search");
-const useUsers = task<User[]>("team", "users");
+const useUsers = query<User[]>("team", "users");
 
 const UI = () => {
   const [users] = useUsers();
@@ -72,7 +68,7 @@ const UI = () => {
 ```
 
 ## Step 3: Implement Add a User
-Implement functionality to add a user. Reload users when a new user is added or when search input changes. Create an add user task. Trigger the users task when the add user task executes or when search state changes.
+Implement functionality to add a user. Reload users when a new user is added or when search input changes. Create an add user effect. Trigger the users effect when the add user effect executes or when search state changes.
 
 ```
 //server
@@ -84,18 +80,11 @@ const users = async (search: string): Promise<User[]> =>
   await db.map<User>(`SELECT id, name FROM users WHERE name LIKE '%{$search}%' ORDER BY name`, {}, row => ({id: row.id, name: row.name}));
 
 const team = app(() => {
-  const search$ = state("search");
-  const newUser$ = state<User>("newUser");
+  const search$ = useState("search");
+  const newUser$ = useState<User>("newUser");
   
-  const add$ = task(
-    {name: "add", triggers: ["self"]},
-    from(addUser, newUser$)
-  );
-  
-  const users$ = task(
-    {name: "users", triggers: ["stateChanges", add$]},
-    from(users, search$)
-  );
+  const add$ = useEffect(addUser, [newUser$], {name: "add"});
+  const users$ = useQuery(users, [search$], {triggers: ["deps", add$]});
 });
 ```
 
@@ -105,14 +94,14 @@ const Team = app("team")
 
 const useSearch = state<string>("team", "search");
 const useNewUser = state<User>("team", "newUser");
-const useUsers = task<User[]>("team", "users");
-const useAdd = task("team", "add");
+const useUsers = query<User[]>("team", "users");
+const useAdd = effect("team", "add");
 
 const UI = () => {
   const [users] = useUsers();
   const [search, setSearch] = useSearch();
   const [newUser, setNewUser] = useNewUser();
-  const [, add] = useAdd();
+  const [add] = useAdd();
   return (
     <Team>
       <input defaultValue={search} onChange={e => setSearch(e.currentTarget.value)} />
@@ -126,7 +115,7 @@ const UI = () => {
 
 ## Step 4: Implement Update and Remove 
 
-Implement update and remove functionality. Reload users when search input changes, a user is added, a user is updated, or a user is removed. Now users are reloaded for four different reasons - search, add, update, and remove. Create update and remove tasks. Then fire an event signaling users changed when add, update, or remove tasks execute. Trigger the users task when the event fires or when search state changes.
+Implement update and remove functionality. Reload users when search input changes, a user is added, a user is updated, or a user is removed. Now users are reloaded for four different reasons - search, add, update, and remove. Create update and remove effects. Then fire an event signaling users changed when add, update, or remove effects execute. Trigger the users query when the event fires or when search state changes.
 
 ```
 //server
@@ -146,34 +135,16 @@ const users = async (search: string): Promise<User[]> =>
   await db.map<User>(`SELECT id, name FROM users WHERE name LIKE '%{$search}%' ORDER BY name`, {}, row => ({id: row.id, name: row.name}));
 
 const team = app(() => {
-  const usersChanged$ = event("usersChanged");
-  const search$ = state("search");
-  const newUser$ = state<User>("newUser");
-  const updatedUser$ = state<User>("updatedUser");
-  const removedUser$ = state<User>("removedUser");
+  const usersChanged$ = useEvent("usersChanged");
+  const search$ = useState("search");
+  const newUser$ = useState<User>("newUser");
+  const updatedUser$ = useState<User>("updatedUser");
+  const removedUser$ = useState<User>("removedUser");
   
-  const update$ = task(
-    {name: "update", triggers: ["self"]},
-    from(updateUser, updatedUser$),
-    trigger(usersChanged$)
-  );
-  
-  const remove$ = task(
-    {name: "remove", triggers: ["self"]},
-    from(removeUser, removedUser$),
-    trigger(usersChanged$)
-  );
-  
-  const add$ = task(
-    {name: "add", triggers: ["self"]},
-    from(addUser, newUser$),
-    trigger(usersChanged$)
-  );
-  
-  const users$ = task(
-    {name: "users", triggers: ["stateChanges", usersChanged$]},
-    from(users, search$)
-  );
+  const update$ = useEffect(updateUser, [updatedUser$], {name: "update", onSuccess: [usersChanged$]});
+  const remove$ = useEffect(removeUser, [removedUser$], {name: "remove", onSuccess: [usersChanged$]});
+  const add$ = useEffect(addUser, [newUser$], {name: "add", onSuccess: [usersChanged$]});
+  const users$ = useQuery(users, [search$], {triggers: ["deps", usersChanged$]});
 });
 ```
 
@@ -185,10 +156,10 @@ const useSearch = state<string>("team", "search");
 const useNewUser = state<User>("team", "newUser");
 const useUpdatedUser = state<User>("team", "updatedUser");
 const useRemovedUser = state<User>("team", "removedUser");
-const useUsers = task<User[]>("team", "users");
-const useAdd = task("team", "add");
-const useUpdate = task("team", "update");
-const useRemove = task("team", "remove");
+const useUsers = query<User[]>("team", "users");
+const useAdd = effect("team", "add");
+const useUpdate = effect("team", "update");
+const useRemove = effect("team", "remove");
 
 const UI = () => {
   const [users] = useUsers();

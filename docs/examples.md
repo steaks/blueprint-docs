@@ -17,66 +17,44 @@ This example is a simple application that demonstrates the basics of Blueprint. 
 
 ```typescript
 //server
-import {app, state, task, event, from} from "blueprint-server";
+import {app, create, useState, useQuery} from "blueprint-server";
 
-const wordCount = (input: string): number => {
-  const trimmedInput = input.trim();
-  return trimmedInput.length === 0 ? 0 : trimmedInput.trim().split(/\s/).length;
-};
-
-const letters = (input: string): number =>
-  input.trim().length;
+const wordCount = (input: string): number =>
+  input.split(/\s/).filter(x => x).length;
 
 const helloWorld = app(() => {
-  const myInput$ = state("myInput", "Hello Input!");
-  const countLetters$ = event("countLetters");
-  const wordCount$ = task(
-    from(wordCount, myInput$)
-  );
-  const letters$ = task(
-    {name: "letters", triggers: [countLetters$]},
-    from(letters, myInput$)
-  );
+  const myInput$ = useState("myInput", "Hello World!");
+  const wordCount$ = useQuery(wordCount, [myInput$]);
 
   return {
     name: "helloWorld",
     state: [myInput$],
-    events: [countLetters$],
-    tasks: [wordCount$, letters$]
+    events: [],
+    queries: [wordCount$]
   };
 });
-
-export default helloWorld;
 ```
 
 ```typescript
 //frontend
-import {app, state, event, task} from "blueprint-react";
+import React from 'react';
+import {Blueprint, app, state, query} from "blueprint-react";
 
-const HelloWorld = app("helloWorld");
-const useMyState = state<string>("helloWorld", "myInput");
-const useWordCount = task<number>("helloWorld", "wordCount");
-const useCountLetters = event("helloWorld", "countLetters");
-const useLetters = task<number>("helloWorld", "letters");
+const HelloWorldApp = app("helloWorld");
+const useMyInput = state<string>("helloWorld", "myInput");
+const useWordCount = query<number>("helloWorld", "wordCount");
 
-const UI = () => {
-  const [myInput, setMyState] = useMyState();
+const HelloWorld = () => {
+  const [myInput, setMyInput] = useMyInput();
   const [wordCount] = useWordCount();
-  const [countLetters] = useCountLetters();
-  const [letters] = useLetters();
 
   return (
-    <HelloWorld>
-      <div>Hello World!!</div>
-      <input defaultValue={myInput} onChange={e => setMyState(e.target.value)}/>
-      <button onClick={countLetters}>Count Letters</button>
+    <HelloWorldApp>
+      <input defaultValue={myInput} onChange={e => setMyInput(e.target.value)}/>
       <div>Word count: {wordCount}</div>
-      <div>Letter count: {letters}</div>
-    </HelloWorld>
+    </HelloWorldApp>
   );
 };
-
-export default UI;
 ```
 
 #### Run the application locally
@@ -100,33 +78,24 @@ This example is an application with that allows a user to view and edit their em
 
 ```typescript
 //server
-import {app, state, event, task, from, trigger} from "blueprint-server";
+import {app, useState, useQuery, useEffect} from "blueprint-server";
 import {queryUser, updateUser} from "../db/user";
 
-export default app(() => {
-  const email$ = state<string>("email");
-  const firstName$ = state<string>("firstName");
-  const lastName$ = state<string>("lastName");
+const userProfile$$ = app(() => {
+  const email$ = useState<string>("email");
+  const firstName$ = useState<string>("firstName");
+  const lastName$ = useState<string>("lastName");
 
-  const save$ = event("save");
-
-  const user$ = task(
-    {name: "user"},
-    from(queryUser)
-  );
-
-  const onSave$ = task(
-    "onSave",
-    {triggers: [save$]},
-    from(updateUser, email$, firstName$, lastName$),
-    trigger(user$)
-  );
+  const save$ = useEvent("save");
+  const user$ = useQuery(queryUser, [], {name: "user"});
+  const onSave$ = useEffect(updateUser, [email$, firstName$, lastName$], {name: "onSave", triggers: [save$], onSuccess: [user$]})
 
   return {
     name: "userProfile",
     state: [email$, firstName$, lastName$],
     events: [save$],
-    tasks: [user$, onSave$]
+    queries: [user$, onSave$],
+    effects: [onSave$]
   };
 });
 ```
@@ -134,14 +103,14 @@ export default app(() => {
 ```typescript
 //frontend
 import React from "react";
-import {app, state, event, task} from "blueprint-react"
+import {app, state, event, query} from "blueprint-react"
 import {User} from "../../../shared/src/apps/userProfile";
 
 export const useEmail = state<string>("userProfile", "email");
 export const useFirstName = state<string>("userProfile", "firstName");
 export const useLastName = state<string>("userProfile", "lastName");
 export const useSave = event("userProfile", "save");
-export const useUser = task<User>("userProfile", "user");
+export const useUser = query<User>("userProfile", "user");
 export const UserProfile = app("userProfile");
 
 const UI = () => {
@@ -200,32 +169,34 @@ This example is a simple application that calculates the area of a rectangle pro
 
 ```typescript
 //server
-import {app, state, task, from} from "blueprint-server";
+import {app, useState, useQuery} from "blueprint-server";
+
 const area = (width: number, height: number) =>
   width * height;
-  
+
 const myApp = app(() => {
-  const width$ = state("width", 10);
-  const height$ = state("height", 15);
-  const area$ = task(from(area, width$, height$));
+  const width$ = useState("width", 10);
+  const height$ = useState("height", 15);
+  const area$ = useQuery(area, [width$, height$]);
 
   return {
     name: "myApp",
     state: [width$, height$],
-    events: [],
-    tasks: [task$]
+    queries: [area$]
   };
 });
+
+export default myApp;
 ```
 
 ```typescript
 //frontend
-import {app, state, task} from "blueprint-react";
+import {app, state, query} from "blueprint-react";
 
 const MyApp = app("myApp");
 const useWidth = state<number>("myApp", "width");
 const useHeight = state<number>("myApp", "height");
-const useArea = task<number>("myApp", "area")
+const useArea = query<number>("myApp", "area");
 
 const UI = () => {
   const [width, setWidth] = useWidth();

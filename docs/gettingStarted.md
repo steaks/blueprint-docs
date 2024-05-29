@@ -48,16 +48,17 @@ State are variables that track information in your app. They are typically input
 
 ```typescript
 /* /server/src/apps/helloWorld.ts */
-import {app, state} from "blueprint-server";
+import {app, useState} from "blueprint-server";
 
 const helloWorld = app(() => {
-  const myInput$ = state("myInput", "Hello Input!");
+  const myInput$ = useState("myInput", "Hello Input!");
 
   return {
     name: "helloWorld",
     state: [myInput$],
     events: [],
-    tasks: []
+    queries: [],
+    effects: []
   };
 });
 
@@ -88,13 +89,13 @@ export default UI;
 !!! Note 
     Server updates are not automatically reflected. `make run-server` compiles and serves your Blueprint server. So CTRL+C and re-run `make run-server` to see changes.
 
-## Build a task
+## Build a query
 
-Tasks are functions (can be async) that can be triggered by events or state changes. Tasks are often used to fetch data from your database, insert data into your db, or run an intense calculation. For your first task you will build a word counter.
+Queries are functions (can be async) that can be triggered by events or state changes. Queries are often used to fetch data from your database, insert data into your db, or run an intense calculation. For your first query you will build a word counter.
 
 ```typescript
 /* /server/src/apps/helloWorld.ts */
-import {app, state, task, from} from "blueprint-server";
+import {app, useState, useQuery} from "blueprint-server";
 
 const wordCount = (input: string): number => {
   const trimmedInput = input.trim();
@@ -102,16 +103,15 @@ const wordCount = (input: string): number => {
 };
 
 const helloWorld = app(() => {
-  const myInput$ = state("myInput", "Hello Input!");
-  const wordCount$ = task(
-    from(wordCount, myInput$)
-  );
+  const myInput$ = useState("myInput", "Hello Input!");
+  const wordCount$ = useQuery(wordCount, [myInput$]);
 
   return {
     name: "helloWorld",
     state: [myInput$],
     events: [],
-    tasks: [wordCount$]
+    queries: [wordCount$],
+    effects: []
   };
 });
 
@@ -120,11 +120,11 @@ export default helloWorld;
 
 ```typescript
 /* /ui/src/apps/helloWorld.tsx */
-import {app, state} from "blueprint-react";
+import {app, state, query} from "blueprint-react";
 
 const HelloWorld = app("helloWorld");
 const useMyState = state<string>("helloWorld", "myInput");
-const useWordCount = state<number>("helloWorld", "wordCount");
+const useWordCount = query<number>("helloWorld", "wordCount");
 
 const UI = () => {
   const [myInput, setMyState] = useMyState();
@@ -147,11 +147,11 @@ export default UI;
 
 ## Build an event
 
-Events are signals that can be used to trigger tasks. Often you will fire events when a user clicks a button. Build a button that triggers a task which counts the number of letters in your input.
+Events are signals that can be used to trigger queries. Often you will fire events when a user clicks a button. Build a button that triggers a query which counts the number of letters in your input.
 
 ```typescript
 /* /server/src/apps/helloWorld.ts */
-import {app, state, task, event, from} from "blueprint-server";
+import {app, useState, useQuery, useEvent} from "blueprint-server";
 
 const wordCount = (input: string): number => {
   const trimmedInput = input.trim();
@@ -162,21 +162,17 @@ const letters = (input: string): number =>
   input.trim().length;
 
 const helloWorld = app(() => {
-  const myInput$ = state("myInput", "Hello Input!");
-  const countLetters$ = event("countLetters");
-  const wordCount$ = task(
-    from(wordCount, myInput$)
-  );
-  const letters$ = task(
-    {name: "letters", triggers: [countLetters$]},
-    from(letters, myInput$)
-  );
+  const myInput$ = useState("myInput", "Hello Input!");
+  const countLetters$ = useEvent("countLetters");
+  const wordCount$ = useQuery(wordCount, [myInput$]);
+  const letters$ = useQuery(letters, [myInput$], {triggers: [countLetters$]});
 
   return {
     name: "helloWorld",
     state: [myInput$],
     events: [countLetters$],
-    tasks: [wordCount$, letters$]
+    queries: [wordCount$, letters$],
+    effects: []
   };
 });
 
@@ -186,13 +182,13 @@ export default helloWorld;
 
 ```typescript
 /* /ui/src/apps/helloWorld.tsx */
-import {app, state, event, task} from "blueprint-react";
+import {app, state, event, query} from "blueprint-react";
 
 const HelloWorld = app("helloWorld");
 const useMyState = state<string>("helloWorld", "myInput");
-const useWordCount = task<number>("helloWorld", "wordCount");
+const useWordCount = query<number>("helloWorld", "wordCount");
 const useCountLetters = event("helloWorld", "countLetters");
-const useLetters = task<number>("helloWorld", "letters");
+const useLetters = query<number>("helloWorld", "letters");
 
 const UI = () => {
   const [myInput, setMyState] = useMyState();

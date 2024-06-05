@@ -8,26 +8,10 @@ Install [Node](https://nodejs.org/en/) with node >= 16 and npm >= 8. Install [GN
 
 ## Initialize your project 
 
-Download and execute the `createBlueprint.sh` to initialize a new project.
+Use create-blueprint-app to initialize a new project.
 
 ```shell
-wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
-chmod +x createBlueprint.sh
-./createBlueprint.sh MyApp
-```
-
-## Install Node dependencies, build, and serve
-
-Run the commands below to spin up a Blueprint web application with a helloWorld app.
-
-```shell
-cd MyApp
-make install
-make build
-make run-server
-make run-ui # Run in separate terminal. 
-# Open browser to http://localhost:3000 to see your app. Follow instructions to navigate to the helloWorld app.
-# Open browser to http://localhost:3000/__blueprint__. This will contain diagrams of your architecture that update as you build.
+npx create-blueprint-app MyApp
 ```
 
 ## Examine the File Structure

@@ -60,12 +60,8 @@ const HelloWorld = () => {
 #### Run the application locally
 
 ```shell
-wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
-chmod +x createBlueprint.sh
-./createBlueprint.sh -t helloWorld MyHelloWorldApplication
+npx create-blueprint-app -t helloWorld MyHelloWorldApplication
 cd MyHelloWorldApplication
-make install
-make build
 make run-server
 make run-ui # Run in separate terminal. Open browser to http://localhost:3000
 ```
@@ -151,12 +147,8 @@ export default UI;
 #### Run the application locally
 
 ```shell
-wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
-chmod +x createBlueprint.sh
-./createBlueprint.sh -t userProfile MyUserProfileApplication
+npx create-blueprint-app -t userProfile MyUserProfileApplication
 cd MyUserProfileApplication
-make install
-make build
 make run-server
 make run-ui # Run in separate terminal. Open browser to http://localhost:3000
 ```
@@ -219,12 +211,8 @@ export default UI;
 #### Run the application locally
 
 ```shell
-wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
-chmod +x createBlueprint.sh
-./createBlueprint.sh -t rectangle MyRectangleApplication
-cd MyRectangleApplication
-make install
-make build
+npx create-blueprint-app -t rectangle MyRectangleApplication
+cd MyUserProfileApplication
 make run-server
 make run-ui # Run in separate terminal. Open browser to http://localhost:3000
 ```
@@ -234,12 +222,8 @@ make run-ui # Run in separate terminal. Open browser to http://localhost:3000
 This example is a more complex application that manages users. Browse the code on [github](https://github.com/steaks/blueprint/tree/main/examples/userManagement) or run the application locally.
 
 ```shell
-wget https://raw.githubusercontent.com/steaks/blueprint-templates/main/createBlueprint.sh
-chmod +x createBlueprint.sh
-./createBlueprint.sh -t rectangle MyRectangleApplication
-cd MyRectangleApplication
-make install
-make build
+npx create-blueprint-app -t userManagement UserManagement
+cd UserManagement 
 make run-server
 make run-ui # Run in separate terminal. Open browser to http://localhost:3000
 ```

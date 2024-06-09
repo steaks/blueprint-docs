@@ -1,4 +1,4 @@
-# Getting Started
+# Tutorial
 
 This tutorial walks you through building the [hello world](./examples.md#hello-world) application. It takes ~10 minutes to complete the tutorial.
 

@@ -2,10 +2,10 @@
 
 ## Live Examples
 
-| Example                      | Website                                                       | Diagram                                                                    | Code                                                                          |
-|------------------------------|---------------------------------------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| Simple Rectangle Application | [Website](https://rectangle-ui-7y67ff2sba-uc.a.run.app/myApp) | [Diagram](https://rectangle-ui-7y67ff2sba-uc.a.run.app/__blueprint__)      | [Code](https://github.com/steaks/blueprint/tree/main/examples/rectangle)      |
-| User Management Application  | [Website](https://usermanagement-ui-7y67ff2sba-uc.a.run.app)  | [Diagram](https://usermanagement-ui-7y67ff2sba-uc.a.run.app/__blueprint__) | [Code](https://github.com/steaks/blueprint/tree/main/examples/userManagement) |
+| Example                                | Website                                                       | Diagram                                                                    | Code                                                                          |
+|----------------------------------------|---------------------------------------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| User Management Application (flagship) | [Website](https://usermanagement-ui-7y67ff2sba-uc.a.run.app)  | [Diagram](https://usermanagement-ui-7y67ff2sba-uc.a.run.app/__blueprint__) | [Code](https://github.com/steaks/blueprint/tree/main/examples/userManagement) |
+| Simple Rectangle Application           | [Website](https://rectangle-ui-7y67ff2sba-uc.a.run.app/myApp) | [Diagram](https://rectangle-ui-7y67ff2sba-uc.a.run.app/__blueprint__)      | [Code](https://github.com/steaks/blueprint/tree/main/examples/rectangle)      |
 
 ## More Examples
 

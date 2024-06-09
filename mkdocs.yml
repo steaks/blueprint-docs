@@ -1,15 +1,16 @@
 site_name: Blueprint Documentation
 nav:
   - Home: index.md
-  - 'Getting Started': gettingStarted.md
+  - 'Quick Start': quickStart.md
+  - 'Tutorial': tutorial.md
   - 'Why Blueprint': whyBlueprint.md
   - Architecture: architecture.md
   - Examples: examples.md
 theme:
-  name: readthedocs
+  name: gitbook
   highlightjs: true
 plugins:
-  - search
+#  - search
   - mkdocstrings:
       handlers:
         # See: https://mkdocstrings.github.io/python/usage/

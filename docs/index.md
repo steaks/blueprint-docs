@@ -1,7 +1,11 @@
 # Welcome to Blueprint
 *Hooks for the Backend*
 
-Blueprint is a web server designed for quick adoption by React developers. It leverages hooks, reactivity, and is aware of your frontend state. This allows you to build your server the same way you build your frontend. See [why blueprint](./whyBlueprint.md) for more.
+Server-side hooks function similarly to React hooks but operate on your backend. These hooks have access to frontend state, react to changes in that state, trigger re-renders, and are type-safe. Blueprint, an express middleware, syncs React state with your backend, allowing you to write server-side hooks without affecting your existing endpoint.
+
+#### How to Get Started?
+
+Get started with the [quick start guide (2 mins)](./quickStart.md) or by following the [hello world tutorial (10 mins)](./tutorial.md).
 
 #### A simple example
 
@@ -24,9 +28,7 @@ const myApp = app(() => {
     state: [width$, height$],
     queries: [area$]
   };
-});
-
-export default myApp;
+}); 
 ```
 
 ```typescript
@@ -63,8 +65,6 @@ Additionally, Blueprint generates a diagram of data dependencies for your web ap
 <iframe src="https://rectangle-ui-7y67ff2sba-uc.a.run.app/__blueprint__?sheet=myApp" frameBorder=0 width="100%" height="300px" style="background-color:#f8f8f8;border:1px solid #e1e4e5;width:100%;"></iframe>
 <br />
 
-See more examples [here](./examples.md).
+#### More examples
 
-#### How to Get Started?
-
-Get started by following this [tutorial](./gettingStarted.md) to build your first Blueprint web application.
+Find more examples [here](./examples.md). Or go straight to the flagship example: [user management app](https://usermanagement-ui-7y67ff2sba-uc.a.run.app).

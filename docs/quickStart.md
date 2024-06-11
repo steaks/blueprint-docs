@@ -6,7 +6,7 @@ You can try out Blueprint by spinning up a new app or integrating it into your e
 
 Spin up a React frontend and Express backend with Blueprint. This is a great way to try out Blueprint.
 ```
-npx create-blueprint-app
+npx create-blueprint-app {your-app-name}
 ```
 
 #### Integrate into your App

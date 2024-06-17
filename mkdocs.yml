@@ -6,6 +6,7 @@ nav:
   - 'Why Blueprint': whyBlueprint.md
   - Architecture: architecture.md
   - Examples: examples.md
+  - Github Repo: https://github.com/steaks/blueprint
 theme:
   name: gitbook
   highlightjs: true

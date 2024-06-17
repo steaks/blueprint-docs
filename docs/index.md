@@ -1,7 +1,7 @@
 # Welcome to Blueprint
 *Hooks for the Backend*
 
-Blueprint is a middleware for Express that syncs frontend state to your backend so you can build server-hooks rather than endpoints. Server-side hooks operate just like React hooks. They have access to your frontend state, execute on dependency changes, trigger re-renders, and are type-safe. Building with server-side hooks allows devs to create cohesive applications with less code.
+Blueprint is a middleware for Express that syncs frontend state to your backend so you can build server-hooks rather than endpoints. Server-side hooks operate just like React hooks. They have access to your frontend state, execute on dependency changes, trigger re-renders, and are type-safe. Building with server-side hooks allows devs to create complex applications with straightforward code.
 
 #### How to Get Started?
 
